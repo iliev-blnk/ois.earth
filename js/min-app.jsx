@@ -58,7 +58,6 @@ function Shell({ route, navigate, children, lang, setLang }) {
             <li><a href="#/lookbook" onClick={(e) => { e.preventDefault(); navigate("/lookbook"); }} className={is("/lookbook") ? "active" : ""}>{t.lookbook}</a></li>
             <li><a href="#/about" onClick={(e) => { e.preventDefault(); navigate("/about"); }} className={is("/about") ? "active" : ""}>{t.about}</a></li>
             <li><a href="#/track" onClick={(e) => { e.preventDefault(); navigate("/track"); }} className={is("/track") ? "active" : ""}>{t.track}</a></li>
-            <li><a href="#/contact" onClick={(e) => { e.preventDefault(); navigate("/contact"); }} className={is("/contact") ? "active" : ""}>{t.contact}</a></li>
           </ul>
         </nav>
       </aside>
