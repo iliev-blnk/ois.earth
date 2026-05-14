@@ -1,6 +1,6 @@
 # ois.earth
 
-Single-page storefront for **OiS** — a small sportswear studio based in Istanbul.
+Single-page storefront for **OiS** — a small studio based in Istanbul.
 
 Built as a static HTML/JS site with no build step. React + Babel loaded from CDN. All state is in-memory or `localStorage`.
 
@@ -120,37 +120,32 @@ const TEST_ORDERS = {
 
 ## Deployment
 
-Hosted on GitHub Pages from the `master` branch root.
+Live: **ois.earth**
 
-Live: **https://iliev-blnk.github.io/ois.earth/**
-
-To deploy: push to `master`. GitHub Pages serves automatically.
+To deploy: push to `master`.
 
 ---
 
 ## To-do
 
 ### Core
-- [ ] Real payment integration (Stripe / iyzico for TR)
+- [ ] Real payment integration (iyzico)
 - [ ] Real order management + order tracking backend
 - [ ] Email confirmation on order placed
-- [ ] Inventory / stock per size
+- [ ] Inventory / stock per size (????)
 - [ ] Sold out state on sizes and products
 
 ### Shop
-- [ ] More products — crewneck, tee, sweatpant
+- [ ] More products
 - [ ] Product back images for black hoodie
 - [ ] Size guide
 - [ ] Currency toggle (TL / USD / EUR)
 
 ### Content
 - [ ] Lookbook Vol. 02+
-- [ ] About page — add team / studio photos
-- [ ] Turkish copy review (native speaker check)
 
 ### Tech
 - [ ] Move from CDN React + Babel to a proper build (Vite)
 - [ ] Image optimization (WebP, lazy loading)
 - [ ] SEO meta tags (og:image, description per page)
 - [ ] Analytics
-- [ ] Custom domain (ois.earth → DNS → GitHub Pages)
