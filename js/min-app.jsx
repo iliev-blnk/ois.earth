@@ -91,8 +91,8 @@ function Home({ navigate }) {
         <a key={p.id} className="tile" href={"#/p/" + p.id} onClick={(e) => { e.preventDefault(); navigate("/p/" + p.id); }}>
           <img src={p.images[0]} alt={p.name + " " + p.colorName} className="tile-img" />
           <div className="meta">
-            <span>{p.name} / {p.colorName}</span>
-            <span>₺{p.price}</span>
+            <span>{p.name}</span>
+            <span style={{ color: "var(--muted)" }}>₺{p.price}</span>
           </div>
         </a>
       ))}
@@ -405,43 +405,51 @@ function Checkout({ navigate, lang }) {
   );
 }
 
+const TEST_ORDERS = {
+  "000000": {
+    eta: "Apr 23, 2026",
+    steps: [
+      { t: "Apr 19 09:12", label: "Order confirmed", state: "done" },
+      { t: "Apr 20 14:30", label: "Packed at the studio", state: "done" },
+      { t: "Apr 21 08:00", label: "In transit · DHL Express", state: "active" },
+      { t: "—", label: "Out for delivery", state: "" },
+      { t: "—", label: "Delivered", state: "" },
+    ],
+  },
+};
+
 function Track({ lang }) {
-  const [id, setId] = useState("OIS-48291");
-  const [found, setFound] = useState(null);
-  const t = lang === "tr" ? { label: "Sipariş numarası girin.", btn: "Takip Et →", order: "Sipariş", eta: "Tahmini Teslim" }
-    : { label: "Enter order number. Format OIS-XXXXX.", btn: "Track →", order: "Order", eta: "ETA" };
+  const [num, setNum] = useState("");
+  const [result, setResult] = useState(null);
+  const t = lang === "tr" ? { label: "Sipariş numaranızı girin.", btn: "Takip Et →", order: "Sipariş", eta: "Tahmini Teslim", notFound: "Sipariş bulunamadı." }
+    : { label: "Enter your order number.", btn: "Track →", order: "Order", eta: "ETA", notFound: "Order not found." };
 
   const lookup = () => {
-    if (id.trim().length < 3) return;
-    setFound({
-      id: id.toUpperCase(),
-      eta: "Apr 23, 2026",
-      steps: [
-        { t: "Apr 19 09:12", label: "Order confirmed", state: "done" },
-        { t: "Apr 20 14:30", label: "Packed at the studio", state: "done" },
-        { t: "Apr 21 08:00", label: "In transit · DHL Express", state: "active" },
-        { t: "—", label: "Out for delivery", state: "" },
-        { t: "—", label: "Delivered", state: "" },
-      ],
-    });
+    const key = num.trim().toUpperCase();
+    const data = TEST_ORDERS[key];
+    setResult(data ? { id: "OIS-" + key, ...data } : { notFound: true });
   };
 
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "calc(100vh - 48px)" }}>
-    <div className="text-page wide">
+    <div className="text-page">
       <p>{t.label}</p>
       <div className="track-input">
-        <input value={id} onChange={(e) => setId(e.target.value)} />
+        <span className="ois-prefix" style={{ userSelect: "none" }}>OIS-</span>
+        <input value={num} onChange={(e) => setNum(e.target.value.replace(/[^0-9a-zA-Z]/g, ""))} onKeyDown={(e) => e.key === "Enter" && lookup()} placeholder="XXXXX" />
         <button onClick={lookup}>{t.btn}</button>
       </div>
-      {found && (
+      {result && result.notFound && (
+        <p style={{ marginTop: 24, color: "var(--muted)" }}>{t.notFound}</p>
+      )}
+      {result && !result.notFound && (
         <>
           <div style={{ marginTop: 32, display: "flex", justifyContent: "space-between" }}>
-            <span>{t.order} {found.id}</span>
-            <span>{t.eta} {found.eta}</span>
+            <span>{t.order} {result.id}</span>
+            <span>{t.eta} {result.eta}</span>
           </div>
           <div className="track-steps">
-            {found.steps.map((s, i) => (
+            {result.steps.map((s, i) => (
               <div key={i} className={"track-step " + s.state}>
                 <span className="t">{s.t}</span>
                 <span className="label"><span className="dot" />{s.label}</span>
@@ -562,7 +570,10 @@ function Contact({ lang }) {
         {emails.map(({ addr, label }) => (
           <div key={addr} className="row" onClick={() => copy(addr)} style={{ cursor: "pointer" }}>
             <div>
-              <div>{copied === addr ? "Copied" : addr}</div>
+              <div style={{ position: "relative" }}>
+                <span style={{ opacity: copied === addr ? 0 : 1 }}>{addr}</span>
+                <span style={{ position: "absolute", left: 0, top: 0, opacity: copied === addr ? 1 : 0 }}>Copied</span>
+              </div>
               <div style={{ color: "var(--muted)", fontSize: 11, marginTop: 4 }}>{label}</div>
             </div>
           </div>
@@ -708,7 +719,8 @@ function App() {
   const [route, setRoute] = useState(window.location.hash.replace(/^#/, "") || "/");
   const [tweaksOpen, setTweaksOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [lang, setLang] = useState("tr");
+  const [lang, setLang] = useState(() => localStorage.getItem("ois_lang") || "tr");
+  const changeLang = (l) => { setLang(l); localStorage.setItem("ois_lang", l); };
 
   const navigate = useCallback((to) => {
     window.location.hash = to;
@@ -754,13 +766,13 @@ function App() {
     <>
       {isHome ? (
         <HomeSplash>
-          <Shell route={route} navigate={navigate} lang={lang} setLang={setLang}>{page}</Shell>
+          <Shell route={route} navigate={navigate} lang={lang} setLang={changeLang}>{page}</Shell>
         </HomeSplash>
       ) : (
-        <Shell route={route} navigate={navigate} lang={lang} setLang={setLang}>{page}</Shell>
+        <Shell route={route} navigate={navigate} lang={lang} setLang={changeLang}>{page}</Shell>
       )}
       <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} navigate={navigate} lang={lang} />
-      <Tweaks open={tweaksOpen} lang={lang} setLang={setLang} />
+      <Tweaks open={tweaksOpen} lang={lang} setLang={changeLang} />
     </>
   );
 }

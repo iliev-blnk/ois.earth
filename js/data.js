@@ -9,7 +9,6 @@ window.OIS_DATA = {
       colorway: "cream",
       images: [
         "images/products/white-front.png",
-        "images/products/white-back.png",
       ],
       sizes: ["XS", "S", "M", "L", "XL", "XXL"],
       details: "320 gsm heavyweight loopback cotton. Oversized fit. Rib-knit cuffs and hem. Brushed interior. Pre-washed for drape.",
