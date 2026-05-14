@@ -36,18 +36,18 @@ function Shell({ route, navigate, children, lang, setLang }) {
   const is = (r) => route === r || (r !== "/" && route.startsWith(r));
 
   const t = lang === "tr" ? {
-    shop: "Mağaza", lookbook: "Lookbook", about: "Hakkında", track: "Takip",
-    cart: "Çanta", instagram: "Instagram", contact: "İletişim",
+    shop: "Mağaza", lookbook: "Lookbook", about: "Hakkında", track: "Takip", contact: "İletişim",
+    cart: "Çanta", instagram: "Instagram",
   } : {
-    shop: "Shop", lookbook: "Lookbook", about: "About", track: "Track",
-    cart: "Cart", instagram: "Instagram", contact: "Contact",
+    shop: "Shop", lookbook: "Lookbook", about: "About", track: "Track", contact: "Contact",
+    cart: "Cart", instagram: "Instagram",
   };
 
   return (
     <div className="shell">
       <aside>
         <div className="brand">
-          <a href="#/" onClick={(e) => { e.preventDefault(); navigate("/"); }}>
+          <a href="#/" onClick={(e) => { e.preventDefault(); if (route === "/") { window.scrollTo({ top: 0, behavior: "smooth" }); } else { navigate("/"); } }}>
             OiS<br />
             <span className="sub">earth</span>
           </a>
@@ -58,6 +58,7 @@ function Shell({ route, navigate, children, lang, setLang }) {
             <li><a href="#/lookbook" onClick={(e) => { e.preventDefault(); navigate("/lookbook"); }} className={is("/lookbook") ? "active" : ""}>{t.lookbook}</a></li>
             <li><a href="#/about" onClick={(e) => { e.preventDefault(); navigate("/about"); }} className={is("/about") ? "active" : ""}>{t.about}</a></li>
             <li><a href="#/track" onClick={(e) => { e.preventDefault(); navigate("/track"); }} className={is("/track") ? "active" : ""}>{t.track}</a></li>
+            <li><a href="#/contact" onClick={(e) => { e.preventDefault(); navigate("/contact"); }} className={is("/contact") ? "active" : ""}>{t.contact}</a></li>
           </ul>
         </nav>
       </aside>
@@ -69,7 +70,7 @@ function Shell({ route, navigate, children, lang, setLang }) {
           {t.cart} (<span className="cart-count">{c.count()}</span>)
         </a>
         <a href="https://instagram.com/ois.earth" target="_blank" rel="noreferrer">{t.instagram}</a>
-        <a href="#/about" onClick={(e) => { e.preventDefault(); navigate("/about"); }}>{t.contact}</a>
+        <a href="#/contact" onClick={(e) => { e.preventDefault(); navigate("/contact"); }}>{t.contact}</a>
         <button
           onClick={() => setLang(lang === "en" ? "tr" : "en")}
           style={{ color: "var(--muted)", marginTop: 12, fontSize: 10 }}
@@ -92,7 +93,7 @@ function Home({ navigate }) {
           <img src={p.images[0]} alt={p.name + " " + p.colorName} className="tile-img" />
           <div className="meta">
             <span>{p.name} / {p.colorName}</span>
-            <span>${p.price}</span>
+            <span>₺{p.price}</span>
           </div>
         </a>
       ))}
@@ -152,7 +153,7 @@ function PDP({ id, navigate, openDrawer, lang }) {
 
       <div className="pdp-info">
         <h1>{p.name}</h1>
-        <div className="price">${p.price}</div>
+        <div className="price">₺{p.price}</div>
 
         <div className="group">
           <div className="group-label">{t.color}</div>
@@ -236,7 +237,7 @@ function Drawer({ open, onClose, navigate, lang }) {
                 <div className={"drawer-thumb-ph " + phClass(i.colorway)} />
               )}
               <div className="info">
-                <div className="top"><span>{i.name} / {i.colorName}</span><span>${i.price * i.qty}</span></div>
+                <div className="top"><span>{i.name} / {i.colorName}</span><span>₺{i.price * i.qty}</span></div>
                 <div style={{ color: "var(--muted)" }}>Size {i.size}</div>
                 <div className="ctrls">
                   <button onClick={() => c.setQty(i.key, i.qty - 1)}>−</button>
@@ -256,8 +257,8 @@ function Drawer({ open, onClose, navigate, lang }) {
         })}
         {c.items.length > 0 && (
           <div className="drawer-foot">
-            <div className="row"><span style={{ color: "var(--muted)" }}>Subtotal</span><span>${total}</span></div>
-            <div className="row total"><span>Total</span><span>${total}</span></div>
+            <div className="row"><span style={{ color: "var(--muted)" }}>Subtotal</span><span>₺{total}</span></div>
+            <div className="row total"><span>Total</span><span>₺{total}</span></div>
             <a className="drawer-checkout" href="#/checkout" onClick={(e) => { e.preventDefault(); onClose(); navigate("/checkout"); }}>{t.checkout} →</a>
           </div>
         )}
@@ -295,7 +296,7 @@ function Cart({ navigate, lang }) {
             <div className="info">
               <div className="top">
                 <span>{i.name} / {i.colorName}</span>
-                <span>${i.price * i.qty}</span>
+                <span>₺{i.price * i.qty}</span>
               </div>
               <div style={{ color: "var(--muted)" }}>Size {i.size}</div>
               <div className="ctrls">
@@ -309,9 +310,9 @@ function Cart({ navigate, lang }) {
         );
       })}
       <div className="cart-summary">
-        <div className="row"><span>Subtotal</span><span>${c.subtotal()}</span></div>
-        <div className="row"><span>Shipping</span><span>Calculated at next step</span></div>
-        <div className="row total"><span>Total</span><span>${c.subtotal()}</span></div>
+        <div className="row"><span>Subtotal</span><span>₺{c.subtotal()}</span></div>
+        <div className="row"><span>Shipping</span><span>Free</span></div>
+        <div className="row total"><span>Total</span><span>₺{c.subtotal()}</span></div>
         <a href="#/checkout" onClick={(e) => { e.preventDefault(); navigate("/checkout"); }} className="cart-cta">{t.checkout}</a>
       </div>
     </div>
@@ -320,10 +321,9 @@ function Cart({ navigate, lang }) {
 
 function Checkout({ navigate, lang }) {
   const c = useCart();
-  const [ship, setShip] = useState("standard");
   const [placed, setPlaced] = useState(false);
-  const shipCost = ship === "express" ? 18 : c.subtotal() >= 120 ? 0 : 8;
-  const tax = Math.round(c.subtotal() * 0.08);
+  const shipCost = 0;
+  const tax = Math.round(c.subtotal() * 0.18);
   const total = c.subtotal() + shipCost + tax;
 
   const orderNum = "OIS-" + Math.floor(10000 + Math.random() * 90000);
@@ -360,13 +360,9 @@ function Checkout({ navigate, lang }) {
         <div className="field"><label>Country</label><input defaultValue="Türkiye" /></div>
 
         <div style={{ color: "var(--muted)", marginTop: 24, marginBottom: 6 }}>Shipping</div>
-        <div className={"radio-row " + (ship === "standard" ? "active" : "")} onClick={() => setShip("standard")}>
-          <span>Standard · 3–5 days</span>
-          <span>{c.subtotal() >= 120 ? "Free" : "$8"}</span>
-        </div>
-        <div className={"radio-row " + (ship === "express" ? "active" : "")} onClick={() => setShip("express")}>
-          <span>Express · 1–2 days</span>
-          <span>$18</span>
+        <div className="radio-row active">
+          <span>Standard · 2–3 days</span>
+          <span>Ücretsiz</span>
         </div>
 
         <div style={{ color: "var(--muted)", marginTop: 24, marginBottom: 6 }}>Payment</div>
@@ -377,7 +373,7 @@ function Checkout({ navigate, lang }) {
         </div>
 
         <button className="btn-plain" style={{ marginTop: 24 }} onClick={() => setPlaced(true)}>
-          Place order · ${total}
+          Place order · ₺{total}
         </button>
       </div>
 
@@ -393,17 +389,17 @@ function Checkout({ navigate, lang }) {
                 <div style={{ width: 44, height: 58, background: i.colorway === "ink" ? "#0a0a0a" : "#ede5d3", flexShrink: 0 }} />
               )}
               <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 2 }}>
-                <div style={{ display: "flex", justifyContent: "space-between" }}><span>{i.name}</span><span>${i.price * i.qty}</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}><span>{i.name}</span><span>₺{i.price * i.qty}</span></div>
                 <span style={{ color: "var(--muted)" }}>{i.colorName} / {i.size} / ×{i.qty}</span>
               </div>
             </div>
           );
         })}
         <div style={{ marginTop: 16 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", padding: "3px 0" }}><span style={{ color: "var(--muted)" }}>Subtotal</span><span>${c.subtotal()}</span></div>
-          <div style={{ display: "flex", justifyContent: "space-between", padding: "3px 0" }}><span style={{ color: "var(--muted)" }}>Shipping</span><span>{shipCost === 0 ? "Free" : "$" + shipCost}</span></div>
-          <div style={{ display: "flex", justifyContent: "space-between", padding: "3px 0" }}><span style={{ color: "var(--muted)" }}>Tax</span><span>${tax}</span></div>
-          <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 0 0", marginTop: 4, borderTop: "1px solid #000" }}><span>Total</span><span>${total}</span></div>
+          <div style={{ display: "flex", justifyContent: "space-between", padding: "3px 0" }}><span style={{ color: "var(--muted)" }}>Subtotal</span><span>₺{c.subtotal()}</span></div>
+          <div style={{ display: "flex", justifyContent: "space-between", padding: "3px 0" }}><span style={{ color: "var(--muted)" }}>Shipping</span><span>Ücretsiz</span></div>
+          <div style={{ display: "flex", justifyContent: "space-between", padding: "3px 0" }}><span style={{ color: "var(--muted)" }}>KDV (%18)</span><span>₺{tax}</span></div>
+          <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 0 0", marginTop: 4, borderTop: "1px solid #000" }}><span>Total</span><span>₺{total}</span></div>
         </div>
       </aside>
     </div>
@@ -432,6 +428,7 @@ function Track({ lang }) {
   };
 
   return (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "calc(100vh - 48px)" }}>
     <div className="text-page">
       <p>{t.label}</p>
       <div className="track-input">
@@ -455,6 +452,7 @@ function Track({ lang }) {
         </>
       )}
     </div>
+    </div>
   );
 }
 
@@ -471,7 +469,7 @@ function Lookbook() {
       </div>
       <div className="text-page" style={{ marginTop: 32 }}>
         <p style={{ color: "var(--muted)" }}>Volume 01 · Shot in Istanbul · 2026</p>
-        <p style={{ color: "var(--muted)", marginTop: 4 }}>Photography · @dasimccaa.studio</p>
+        <p style={{ color: "var(--muted)", marginTop: 4 }}>Photography · @dascinscaia.studio</p>
       </div>
     </div>
   );
@@ -479,35 +477,76 @@ function Lookbook() {
 
 function About({ lang }) {
   const t = lang === "tr" ? {
-    p1: "ois Istanbul'da kurulmuş küçük bir spor giyim stüdyosudur. Bir kazak, bir sweatshirt, bir tişört, bir eşofman — bir seferde bir parça üretiyoruz.",
-    p2: "Koleksiyon yapmıyoruz. Bir parça hazır olduğunda piyasaya çıkarıyoruz ve giyildiği sürece üretiyoruz. Kaliteli konfor için tasarlandı.",
-    p3: "Tüm ürünler stüdyomuzun 40 km yakınındaki iki küçük aile atölyesinde kesilip dikilmektedir.",
+    paras: [
+      "ois Istanbul'da kurulmuş küçük bir spor giyim stüdyosudur.",
+      "Bir kazak, bir sweatshirt, bir tişört, bir eşofman — bir seferde bir parça üretiyoruz.",
+      "Koleksiyon yapmıyoruz.",
+      "Bir parça hazır olduğunda piyasaya çıkarıyoruz ve giyildiği sürece üretiyoruz.",
+      "Kaliteli konfor için tasarlandı.",
+      "Tüm ürünler stüdyomuzun 40 km yakınındaki iki küçük aile atölyesinde kesilip dikilmektedir.",
+      "Kumaş İzmir ve Bursa'dan temin edilmektedir.",
+    ],
     contact: "İletişim", general: "Genel", studio: "Stüdyo",
     policies: "Politikalar", shipping: "Kargo", returns: "İade", care: "Bakım",
+    shippingVal: "Ücretsiz", returnsVal: "14 gün içinde iade", careVal: "Soğuk yıkayın, serin kurutun",
   } : {
-    p1: "ois is a small sportswear studio based in Istanbul. We make one hoodie, one crewneck, one tee, one sweatpant — at a time.",
-    p2: "We don't run seasons. We release a piece when it's ready and we keep making it as long as it's worn. Designed for quality comfort.",
-    p3: "All garments are cut and sewn within 40km of the studio, at two small family-run ateliers. Fabric is sourced from İzmir and Bursa.",
+    paras: [
+      "ois is a small sportswear studio based in Istanbul.",
+      "We make one hoodie, one crewneck, one tee, one sweatpant — at a time.",
+      "We don't run seasons.",
+      "We release a piece when it's ready and we keep making it as long as it's worn.",
+      "Designed for quality comfort.",
+      "All garments are cut and sewn within 40km of the studio, at two small family-run ateliers.",
+      "Fabric is sourced from İzmir and Bursa.",
+    ],
     contact: "Contact", general: "General", studio: "Studio",
     policies: "Policies", shipping: "Shipping", returns: "Returns", care: "Care",
+    shippingVal: "Free", returnsVal: "14 days unworn", careVal: "Wash cold, line dry",
   };
 
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "calc(100vh - 48px)" }}>
       <div className="text-page">
-        <p style={{ textTransform: "none", fontSize: 14, lineHeight: 1.7 }}>{t.p1}</p>
-        <p style={{ textTransform: "none", fontSize: 14, lineHeight: 1.7, marginTop: 18 }}>{t.p2}</p>
-        <p style={{ textTransform: "none", fontSize: 14, lineHeight: 1.7, marginTop: 18 }}>{t.p3}</p>
+        {t.paras.map((p, i) => (
+          <p key={i} style={{ textTransform: "none", fontSize: 14, lineHeight: 1.7, marginTop: i === 0 ? 0 : 14 }}>{p}</p>
+        ))}
 
         <h2 style={{ marginTop: 36, fontSize: 13 }}>{t.contact}</h2>
-        <div className="row"><span>{t.general}</span><span>hello@ois.earth</span></div>
+        <div className="row"><span>{t.general}</span><span>contact@ois.earth</span></div>
         <div className="row"><span>Instagram</span><span>@ois.earth</span></div>
         <div className="row"><span>{t.studio}</span><span>Bahçelievler, Istanbul</span></div>
 
         <h2 style={{ marginTop: 36, fontSize: 13 }}>{t.policies}</h2>
-        <div className="row"><span>{t.shipping}</span><span>Free over $120</span></div>
-        <div className="row"><span>{t.returns}</span><span>14 days unworn</span></div>
-        <div className="row"><span>{t.care}</span><span>Wash cold, line dry</span></div>
+        <div className="row"><span>{t.shipping}</span><span>{t.shippingVal}</span></div>
+        <div className="row"><span>{t.returns}</span><span>{t.returnsVal}</span></div>
+        <div className="row"><span>{t.care}</span><span>{t.careVal}</span></div>
+      </div>
+    </div>
+  );
+}
+
+function Contact() {
+  return (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "calc(100vh - 48px)" }}>
+      <div className="text-page">
+        <div className="row">
+          <div>
+            <div>contact@ois.earth</div>
+            <div style={{ color: "var(--muted)", fontSize: 11, marginTop: 4 }}>General</div>
+          </div>
+        </div>
+        <div className="row">
+          <div>
+            <div>business@ois.earth</div>
+            <div style={{ color: "var(--muted)", fontSize: 11, marginTop: 4 }}>Partnerships & wholesale</div>
+          </div>
+        </div>
+        <div className="row">
+          <div>
+            <div>olga.dascinscaia@ois.earth</div>
+            <div style={{ color: "var(--muted)", fontSize: 11, marginTop: 4 }}>Creative direction & photography</div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -688,6 +727,7 @@ function App() {
   else if (route === "/track") page = <Track lang={lang} />;
   else if (route === "/lookbook") page = <Lookbook />;
   else if (route === "/about") page = <About lang={lang} />;
+  else if (route === "/contact") page = <Contact />;
   else page = <div className="text-page"><p>Not found.</p></div>;
 
   return (
