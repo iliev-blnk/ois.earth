@@ -525,27 +525,30 @@ function About({ lang }) {
 }
 
 function Contact() {
+  const [copied, setCopied] = useState(null);
+  const copy = (email) => {
+    navigator.clipboard.writeText(email);
+    setCopied(email);
+    setTimeout(() => setCopied(null), 1500);
+  };
+
+  const emails = [
+    { addr: "contact@ois.earth", label: "General" },
+    { addr: "business@ois.earth", label: "Partnerships & wholesale" },
+    { addr: "olga.dascinscaia@ois.earth", label: "Creative direction & photography" },
+  ];
+
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "calc(100vh - 48px)" }}>
       <div className="text-page">
-        <div className="row">
-          <div>
-            <div>contact@ois.earth</div>
-            <div style={{ color: "var(--muted)", fontSize: 11, marginTop: 4 }}>General</div>
+        {emails.map(({ addr, label }) => (
+          <div key={addr} className="row" onClick={() => copy(addr)} style={{ cursor: "pointer" }}>
+            <div>
+              <div>{copied === addr ? "Copied" : addr}</div>
+              <div style={{ color: "var(--muted)", fontSize: 11, marginTop: 4 }}>{label}</div>
+            </div>
           </div>
-        </div>
-        <div className="row">
-          <div>
-            <div>business@ois.earth</div>
-            <div style={{ color: "var(--muted)", fontSize: 11, marginTop: 4 }}>Partnerships & wholesale</div>
-          </div>
-        </div>
-        <div className="row">
-          <div>
-            <div>olga.dascinscaia@ois.earth</div>
-            <div style={{ color: "var(--muted)", fontSize: 11, marginTop: 4 }}>Creative direction & photography</div>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );
