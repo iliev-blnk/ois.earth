@@ -2,7 +2,7 @@ window.OIS_DATA = {
   products: [
     {
       id: "essential-hoodie-white",
-      name: "Essential Hoodie",
+      name: "It's my first time on earth",
       colorName: "White",
       price: 68,
       collection: "essentials",
@@ -18,7 +18,7 @@ window.OIS_DATA = {
     },
     {
       id: "essential-hoodie-black",
-      name: "Essential Hoodie",
+      name: "I am only human",
       colorName: "Black",
       price: 68,
       collection: "essentials",
