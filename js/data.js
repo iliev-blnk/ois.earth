@@ -8,8 +8,8 @@ window.OIS_DATA = {
       collection: "essentials",
       colorway: "cream",
       images: [
-        "white-front.png",
-        "white-back.png",
+        "images/products/white-front.png",
+        "images/products/white-back.png",
       ],
       sizes: ["XS", "S", "M", "L", "XL", "XXL"],
       details: "320 gsm heavyweight loopback cotton. Oversized fit. Rib-knit cuffs and hem. Brushed interior. Pre-washed for drape.",
@@ -24,8 +24,8 @@ window.OIS_DATA = {
       collection: "essentials",
       colorway: "ink",
       images: [
-        "black-front.png",
-        "black-back.png",
+        "images/products/black-front.png",
+        "images/products/black-back.png",
       ],
       sizes: ["XS", "S", "M", "L", "XL", "XXL"],
       details: "320 gsm heavyweight loopback cotton. Oversized fit. Pigment-dyed for depth. Pre-washed for drape.",

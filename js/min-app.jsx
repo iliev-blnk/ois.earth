@@ -455,21 +455,35 @@ function Track({ lang }) {
   );
 }
 
+const LOOKBOOK_VOLS = [
+  {
+    vol: "Vol. 01",
+    location: "Istanbul · 2026",
+    photos: [
+      "images/lookbook/vol-01/lookbook1.jpg",
+      "images/lookbook/vol-01/lookbook2.jpg",
+      "images/lookbook/vol-01/lookbook3.jpg",
+      "images/lookbook/vol-01/lookbook4.jpg",
+    ],
+  },
+];
+
 function Lookbook() {
   return (
     <div>
-      <div className="lookbook">
-        <div className="ph full wide cream" />
-        <div className="ph cream" />
-        <div className="ph dark" />
-        <div className="ph full wide dark" />
-        <div className="ph cream" />
-        <div className="ph dark" />
-      </div>
-      <div className="text-page" style={{ marginTop: 32 }}>
-        <p style={{ color: "var(--muted)" }}>Volume 01 · Shot in Istanbul · 2026</p>
-        <p style={{ color: "var(--muted)", marginTop: 4 }}>Photography · @dascinscaia.studio</p>
-      </div>
+      {LOOKBOOK_VOLS.map((v) => (
+        <div key={v.vol}>
+          <div className="lookbook">
+            {v.photos.map((src, i) => (
+              <img key={i} src={src} alt={v.vol + " photo " + (i + 1)} className={"lb-img" + (i % 3 === 0 ? " full wide" : "")} />
+            ))}
+          </div>
+          <div className="text-page" style={{ marginTop: 32, marginBottom: 64 }}>
+            <p style={{ color: "var(--muted)" }}>{v.vol} · Shot in {v.location}</p>
+            <p style={{ color: "var(--muted)", marginTop: 4 }}>Photography · @dascinscaia.studio</p>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

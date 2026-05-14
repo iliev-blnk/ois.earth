@@ -133,7 +133,7 @@
 
   /* ---------- text pages ---------- */
   .text-page { max-width: 520px; margin: 0 auto; }
-  .text-page.wide { max-width: 780px; }
+  .text-page.wide { max-width: 100%; }
   .text-page p { margin-bottom: 1em; }
   .text-page h2 { font-weight: normal; margin-bottom: 1em; font-size: 11px; }
   .text-page .row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 14px; }
@@ -316,12 +316,8 @@
   /* ---------- lookbook ---------- */
   .lookbook { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   @media (max-width: 780px) { .lookbook { grid-template-columns: 1fr; } }
-  .lookbook .ph { aspect-ratio: 3/4; background: #ededed; }
-  .lookbook .ph.dark { background: #0a0a0a; }
-  .lookbook .ph.cream { background: #ede5d3; }
-  .lookbook .ph.wide { aspect-ratio: 16/10; }
-  .lookbook .full { grid-column: 1 / -1; }
-  .lookbook img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .lookbook .lb-img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
+  .lookbook .lb-img.full { grid-column: 1 / -1; aspect-ratio: 16/10; }
 
   /* ---------- tweaks ---------- */
   .tweaks {
