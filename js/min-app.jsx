@@ -482,32 +482,33 @@ function About({ lang }) {
     p1: "ois Istanbul'da kurulmuş küçük bir spor giyim stüdyosudur. Bir kazak, bir sweatshirt, bir tişört, bir eşofman — bir seferde bir parça üretiyoruz.",
     p2: "Koleksiyon yapmıyoruz. Bir parça hazır olduğunda piyasaya çıkarıyoruz ve giyildiği sürece üretiyoruz. Kaliteli konfor için tasarlandı.",
     p3: "Tüm ürünler stüdyomuzun 40 km yakınındaki iki küçük aile atölyesinde kesilip dikilmektedir.",
-    contact: "İletişim", general: "Genel", wholesale: "Toptan", studio: "Stüdyo",
+    contact: "İletişim", general: "Genel", studio: "Stüdyo",
     policies: "Politikalar", shipping: "Kargo", returns: "İade", care: "Bakım",
   } : {
     p1: "ois is a small sportswear studio based in Istanbul. We make one hoodie, one crewneck, one tee, one sweatpant — at a time.",
     p2: "We don't run seasons. We release a piece when it's ready and we keep making it as long as it's worn. Designed for quality comfort.",
     p3: "All garments are cut and sewn within 40km of the studio, at two small family-run ateliers. Fabric is sourced from İzmir and Bursa.",
-    contact: "Contact", general: "General", wholesale: "Wholesale", studio: "Studio",
+    contact: "Contact", general: "General", studio: "Studio",
     policies: "Policies", shipping: "Shipping", returns: "Returns", care: "Care",
   };
 
   return (
-    <div className="text-page">
-      <p style={{ textTransform: "none", fontSize: 11, lineHeight: 1.6 }}>{t.p1}</p>
-      <p style={{ textTransform: "none", fontSize: 11, lineHeight: 1.6, marginTop: 14 }}>{t.p2}</p>
-      <p style={{ textTransform: "none", fontSize: 11, lineHeight: 1.6, marginTop: 14 }}>{t.p3}</p>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "calc(100vh - 48px)" }}>
+      <div className="text-page">
+        <p style={{ textTransform: "none", fontSize: 14, lineHeight: 1.7 }}>{t.p1}</p>
+        <p style={{ textTransform: "none", fontSize: 14, lineHeight: 1.7, marginTop: 18 }}>{t.p2}</p>
+        <p style={{ textTransform: "none", fontSize: 14, lineHeight: 1.7, marginTop: 18 }}>{t.p3}</p>
 
-      <h2 style={{ marginTop: 32 }}>{t.contact}</h2>
-      <div className="row"><span>{t.general}</span><span>hello@ois.earth</span></div>
-      <div className="row"><span>{t.wholesale}</span><span>stockists@ois.earth</span></div>
-      <div className="row"><span>Instagram</span><span>@ois.earth</span></div>
-      <div className="row"><span>{t.studio}</span><span>Bahçelievler, Istanbul</span></div>
+        <h2 style={{ marginTop: 36, fontSize: 13 }}>{t.contact}</h2>
+        <div className="row"><span>{t.general}</span><span>hello@ois.earth</span></div>
+        <div className="row"><span>Instagram</span><span>@ois.earth</span></div>
+        <div className="row"><span>{t.studio}</span><span>Bahçelievler, Istanbul</span></div>
 
-      <h2 style={{ marginTop: 32 }}>{t.policies}</h2>
-      <div className="row"><span>{t.shipping}</span><span>Free over $120</span></div>
-      <div className="row"><span>{t.returns}</span><span>14 days unworn</span></div>
-      <div className="row"><span>{t.care}</span><span>Wash cold, line dry</span></div>
+        <h2 style={{ marginTop: 36, fontSize: 13 }}>{t.policies}</h2>
+        <div className="row"><span>{t.shipping}</span><span>Free over $120</span></div>
+        <div className="row"><span>{t.returns}</span><span>14 days unworn</span></div>
+        <div className="row"><span>{t.care}</span><span>Wash cold, line dry</span></div>
+      </div>
     </div>
   );
 }
