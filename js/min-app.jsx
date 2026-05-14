@@ -429,7 +429,7 @@ function Track({ lang }) {
 
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "calc(100vh - 48px)" }}>
-    <div className="text-page">
+    <div className="text-page wide">
       <p>{t.label}</p>
       <div className="track-input">
         <input value={id} onChange={(e) => setId(e.target.value)} />
