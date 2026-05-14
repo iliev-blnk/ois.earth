@@ -84,9 +84,74 @@
     top: 24px;
     align-self: start;
   }
+  /* ---------- mobile ---------- */
+  .mobile-header { display: none; }
+  .mobile-nav { display: none; }
+
   @media (max-width: 780px) {
-    .shell { grid-template-columns: 1fr; gap: 16px; padding: 16px; }
-    .shell > aside { position: static; }
+    /* Shell: hide desktop sidebars, remove padding (header handles it) */
+    .shell { grid-template-columns: 1fr; gap: 0; padding: 0; }
+    .shell > aside { display: none; }
+    main { padding: 0 16px 60px; }
+
+    /* Mobile header bar */
+    .mobile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      position: sticky;
+      top: 0;
+      background: var(--paper);
+      z-index: 100;
+    }
+    .mobile-brand { font-size: 11px; letter-spacing: 0.05em; }
+    .mobile-header-right { display: flex; gap: 16px; align-items: center; color: var(--muted); }
+
+    /* Mobile nav row */
+    .mobile-nav {
+      display: flex;
+      gap: 20px;
+      padding: 0 16px 14px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      border-bottom: 1px solid #f0f0f0;
+      margin-bottom: 24px;
+    }
+    .mobile-nav::-webkit-scrollbar { display: none; }
+    .mobile-nav a { color: var(--muted); white-space: nowrap; }
+    .mobile-nav a.active { color: var(--ink); }
+
+    /* Home grid: single col, no zig-zag */
+    .home { grid-template-columns: 1fr; gap: 48px; }
+    .home .tile:nth-child(odd),
+    .home .tile:nth-child(even) { transform: none; }
+    .tile .meta { bottom: 22%; }
+
+    /* Splash */
+    .splash .logo { font-size: 20vw; }
+
+    /* PDP */
+    .pdp { gap: 24px; padding-bottom: 40px; }
+    .pdp-media { max-width: 100%; }
+    .pdp-info { max-width: 100%; }
+
+    /* Text pages */
+    .text-page { max-width: 100%; }
+    .text-page .row { font-size: 12px; }
+
+    /* Centering wrappers: don't force full viewport height on mobile */
+    .text-page-centered { min-height: unset !important; padding: 32px 0; }
+
+    /* Checkout */
+    .checkout-grid { grid-template-columns: 1fr; }
+
+    /* Lookbook */
+    .lookbook { grid-template-columns: 1fr; }
+
+    /* Track steps */
+    .track-step .t { flex: 0 0 90px; }
   }
 
   .brand { font-size: 11px; letter-spacing: 0.05em; }

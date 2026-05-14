@@ -43,11 +43,33 @@ function Shell({ route, navigate, children, lang, setLang }) {
     cart: "Cart", instagram: "Instagram",
   };
 
+  const logoClick = (e) => { e.preventDefault(); if (route === "/") { window.scrollTo({ top: 0, behavior: "smooth" }); } else { navigate("/"); } };
+
   return (
     <div className="shell">
+      {/* Mobile header */}
+      <div className="mobile-header">
+        <a href="#/" onClick={logoClick} className="mobile-brand">OiS <span style={{ color: "var(--muted)" }}>earth</span></a>
+        <div className="mobile-header-right">
+          <button onClick={() => setLang(lang === "en" ? "tr" : "en")} style={{ color: "var(--muted)" }}>{lang === "en" ? "TR" : "EN"}</button>
+          <a href="#/cart" onClick={(e) => { e.preventDefault(); navigate("/cart"); }}>
+            {t.cart} (<span className="cart-count">{c.count()}</span>)
+          </a>
+        </div>
+      </div>
+
+      {/* Mobile nav */}
+      <nav className="mobile-nav">
+        <a href="#/" onClick={(e) => { e.preventDefault(); navigate("/"); }} className={route === "/" ? "active" : ""}>{t.shop}</a>
+        <a href="#/lookbook" onClick={(e) => { e.preventDefault(); navigate("/lookbook"); }} className={is("/lookbook") ? "active" : ""}>{t.lookbook}</a>
+        <a href="#/about" onClick={(e) => { e.preventDefault(); navigate("/about"); }} className={is("/about") ? "active" : ""}>{t.about}</a>
+        <a href="#/track" onClick={(e) => { e.preventDefault(); navigate("/track"); }} className={is("/track") ? "active" : ""}>{t.track}</a>
+        <a href="#/contact" onClick={(e) => { e.preventDefault(); navigate("/contact"); }} className={is("/contact") ? "active" : ""}>{t.contact}</a>
+      </nav>
+
       <aside>
         <div className="brand">
-          <a href="#/" onClick={(e) => { e.preventDefault(); if (route === "/") { window.scrollTo({ top: 0, behavior: "smooth" }); } else { navigate("/"); } }}>
+          <a href="#/" onClick={logoClick}>
             OiS<br />
             <span className="sub">earth</span>
           </a>
@@ -70,10 +92,7 @@ function Shell({ route, navigate, children, lang, setLang }) {
         </a>
         <a href="https://instagram.com/ois.earth" target="_blank" rel="noreferrer">{t.instagram}</a>
         <a href="#/contact" onClick={(e) => { e.preventDefault(); navigate("/contact"); }}>{t.contact}</a>
-        <button
-          onClick={() => setLang(lang === "en" ? "tr" : "en")}
-          style={{ color: "var(--muted)", marginTop: 12, fontSize: 10 }}
-        >
+        <button onClick={() => setLang(lang === "en" ? "tr" : "en")} style={{ color: "var(--muted)", marginTop: 12, fontSize: 10 }}>
           {lang === "en" ? "TR" : "EN"}
         </button>
         <div style={{ color: "var(--muted)", marginTop: 8, fontSize: 10 }}>
@@ -431,7 +450,7 @@ function Track({ lang }) {
   };
 
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "calc(100vh - 48px)" }}>
+    <div className="text-page-centered" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "calc(100vh - 48px)" }}>
     <div className="text-page">
       <p>{t.label}</p>
       <div className="track-input">
@@ -526,7 +545,7 @@ function About({ lang }) {
   };
 
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "calc(100vh - 48px)" }}>
+    <div className="text-page-centered" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "calc(100vh - 48px)" }}>
       <div className="text-page">
         {t.paras.map((p, i) => (
           <p key={i} style={{ textTransform: "none", fontSize: 14, lineHeight: 1.7, marginTop: i === 0 ? 0 : 14 }}>{p}</p>
@@ -565,7 +584,7 @@ function Contact({ lang }) {
   ];
 
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "calc(100vh - 48px)" }}>
+    <div className="text-page-centered" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "calc(100vh - 48px)" }}>
       <div className="text-page">
         {emails.map(({ addr, label }) => (
           <div key={addr} className="row" onClick={() => copy(addr)} style={{ cursor: "pointer" }}>
