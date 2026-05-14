@@ -524,7 +524,7 @@ function About({ lang }) {
   );
 }
 
-function Contact() {
+function Contact({ lang }) {
   const [copied, setCopied] = useState(null);
   const copy = (email) => {
     navigator.clipboard.writeText(email);
@@ -532,7 +532,11 @@ function Contact() {
     setTimeout(() => setCopied(null), 1500);
   };
 
-  const emails = [
+  const emails = lang === "tr" ? [
+    { addr: "contact@ois.earth", label: "Genel" },
+    { addr: "business@ois.earth", label: "İş birlikleri & toptan satış" },
+    { addr: "olga.dascinscaia@ois.earth", label: "Kreatif yönetim & fotoğraf" },
+  ] : [
     { addr: "contact@ois.earth", label: "General" },
     { addr: "business@ois.earth", label: "Partnerships & wholesale" },
     { addr: "olga.dascinscaia@ois.earth", label: "Creative direction & photography" },
@@ -690,7 +694,7 @@ function App() {
   const [route, setRoute] = useState(window.location.hash.replace(/^#/, "") || "/");
   const [tweaksOpen, setTweaksOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [lang, setLang] = useState("en");
+  const [lang, setLang] = useState("tr");
 
   const navigate = useCallback((to) => {
     window.location.hash = to;
@@ -729,7 +733,7 @@ function App() {
   else if (route === "/track") page = <Track lang={lang} />;
   else if (route === "/lookbook") page = <Lookbook />;
   else if (route === "/about") page = <About lang={lang} />;
-  else if (route === "/contact") page = <Contact />;
+  else if (route === "/contact") page = <Contact lang={lang} />;
   else page = <div className="text-page"><p>Not found.</p></div>;
 
   return (
