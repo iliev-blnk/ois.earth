@@ -45,13 +45,13 @@ function Shell({ route, navigate, children, lang, setLang }) {
     cart: "Cart", instagram: "Instagram",
   };
 
-  const logoClick = (e) => { e.preventDefault(); if (route === "/") { window.scrollTo({ top: 0, behavior: "smooth" }); } else { navigate("/"); } };
+  const homeClick = (e) => { e.preventDefault(); if (route === "/") { window.scrollTo({ top: 0, behavior: "smooth" }); } else { navigate("/"); } };
 
   return (
     <div className="shell">
       {/* Mobile header */}
       <div className="mobile-header">
-        <a href="#/" onClick={logoClick} className="mobile-brand">OiS <span style={{ color: "var(--muted)" }}>earth</span></a>
+        <a href="#/" onClick={homeClick} className="mobile-brand">OiS <span style={{ color: "var(--muted)" }}>earth</span></a>
         <div className="mobile-header-right">
           <button onClick={() => setLang(lang === "en" ? "tr" : "en")} style={{ color: "var(--muted)" }}>{lang === "en" ? "TR" : "EN"}</button>
           <a href="#/cart" onClick={(e) => { e.preventDefault(); navigate("/cart"); }}>
@@ -62,7 +62,7 @@ function Shell({ route, navigate, children, lang, setLang }) {
 
       {/* Mobile nav */}
       <nav className="mobile-nav">
-        <a href="#/" onClick={(e) => { e.preventDefault(); navigate("/"); }} className={route === "/" ? "active" : ""}>{t.shop}</a>
+        <a href="#/" onClick={homeClick} className={route === "/" ? "active" : ""}>{t.shop}</a>
         <a href="#/lookbook" onClick={(e) => { e.preventDefault(); navigate("/lookbook"); }} className={is("/lookbook") ? "active" : ""}>{t.lookbook}</a>
         <a href="#/about" onClick={(e) => { e.preventDefault(); navigate("/about"); }} className={is("/about") ? "active" : ""}>{t.about}</a>
         <a href="#/track" onClick={(e) => { e.preventDefault(); navigate("/track"); }} className={is("/track") ? "active" : ""}>{t.track}</a>
@@ -71,14 +71,14 @@ function Shell({ route, navigate, children, lang, setLang }) {
 
       <aside>
         <div className="brand">
-          <a href="#/" onClick={logoClick}>
+          <a href="#/" onClick={homeClick}>
             OiS<br />
             <span className="sub">earth</span>
           </a>
         </div>
         <nav className="primary">
           <ul>
-            <li><a href="#/" onClick={(e) => { e.preventDefault(); navigate("/"); }} className={route === "/" ? "active" : ""}>{t.shop}</a></li>
+            <li><a href="#/" onClick={homeClick} className={route === "/" ? "active" : ""}>{t.shop}</a></li>
             <li><a href="#/lookbook" onClick={(e) => { e.preventDefault(); navigate("/lookbook"); }} className={is("/lookbook") ? "active" : ""}>{t.lookbook}</a></li>
             <li><a href="#/about" onClick={(e) => { e.preventDefault(); navigate("/about"); }} className={is("/about") ? "active" : ""}>{t.about}</a></li>
             <li><a href="#/track" onClick={(e) => { e.preventDefault(); navigate("/track"); }} className={is("/track") ? "active" : ""}>{t.track}</a></li>
