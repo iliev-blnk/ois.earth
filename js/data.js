@@ -6,7 +6,6 @@ window.OIS_DATA = {
       colorName: "White",
       price: 2000,
       collection: "essentials",
-      variantGroup: "essential-hoodie",
       colorway: "cream",
       images: [
         "images/products/white-front.png",
@@ -23,7 +22,6 @@ window.OIS_DATA = {
       colorName: "Black",
       price: 2000,
       collection: "essentials",
-      variantGroup: "essential-hoodie",
       colorway: "ink",
       images: [
         "images/products/black-front.png",

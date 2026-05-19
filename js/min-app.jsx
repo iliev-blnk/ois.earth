@@ -244,20 +244,22 @@ function PDP({ id, navigate, openDrawer, lang }) {
         <h1>{p.name}</h1>
         <div className="price">₺{p.price}</div>
 
-        <div className="group">
-          <div className="group-label">{t.color}</div>
-          <div className="swatches">
-            {variants.map((v) => (
-              <button
-                key={v.id}
-                className={"swatch " + (v.id === p.id ? "active" : "")}
-                onClick={() => navigate("/p/" + v.id)}
-                style={{ background: v.colorway === "ink" ? "#0a0a0a" : v.colorway === "cream" ? "#ede5d3" : "#bbb" }}
-                title={v.colorName}
-              />
-            ))}
+        {variants.length > 1 && (
+          <div className="group">
+            <div className="group-label">{t.color}</div>
+            <div className="swatches">
+              {variants.map((v) => (
+                <button
+                  key={v.id}
+                  className={"swatch " + (v.id === p.id ? "active" : "")}
+                  onClick={() => navigate("/p/" + v.id)}
+                  style={{ background: v.colorway === "ink" ? "#0a0a0a" : v.colorway === "cream" ? "#ede5d3" : "#bbb" }}
+                  title={v.colorName}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         <div style={{ marginTop: 32 }}>
           {!expanded ? (
