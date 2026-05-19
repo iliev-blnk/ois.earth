@@ -185,7 +185,7 @@ function PDP({ id, navigate, openDrawer, lang }) {
   const [size, setSize] = useState(null);
   const [guideOpen, setGuideOpen] = useState(false);
   const [zoomed, setZoomed] = useState(false);
-  const variants = useMemo(() => OIS_DATA.products.filter((x) => x.variantGroup === p?.variantGroup), [p?.variantGroup]);
+  const variants = useMemo(() => p?.variantGroup ? OIS_DATA.products.filter((x) => x.variantGroup === p.variantGroup) : [p], [p]);
   const soldOut = useMemo(() => new Set(p?.soldOut || []), [p]);
 
   if (!p) return <div>Not found.</div>;
