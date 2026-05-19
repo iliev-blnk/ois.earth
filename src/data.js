@@ -9,6 +9,7 @@ export const OIS_DATA = {
       colorway: "cream",
       images: [
         "images/products/white-front.png",
+        "images/products/white-back.png",
       ],
       sizes: ["XS", "S", "M", "L", "XL", "XXL"],
       soldOut: [],
