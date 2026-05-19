@@ -841,7 +841,7 @@ function HomeSplash({ children }) {
         </div>
         <div className="hint">scroll ↓</div>
       </section>
-      <section>{children}</section>
+      <section style={{ overflow: 'clip' }}>{children}</section>
     </div>
   );
 }
