@@ -1,4 +1,6 @@
-const { useState, useEffect, useCallback, useMemo, useRef } = React;
+const { useState, useEffect, useLayoutEffect, useCallback, useMemo, useRef } = React;
+
+let splashSeen = false;
 
 const CART_KEY = "ois_cart_v1";
 const cart = {
@@ -723,6 +725,14 @@ function Tweaks({ open, lang, setLang }) {
 }
 
 function HomeSplash({ children }) {
+  useLayoutEffect(() => {
+    if (splashSeen) {
+      window.scrollTo(0, window.innerHeight);
+    } else {
+      splashSeen = true;
+    }
+  }, []);
+
   useEffect(() => {
     const vh = () => window.innerHeight;
     let snappedDown = false;
@@ -824,11 +834,7 @@ function App() {
   const navigate = useCallback((to) => {
     window.location.hash = to;
     setRoute(to);
-    if (to === "/") {
-      setTimeout(() => window.scrollTo(0, window.innerHeight), 0);
-    } else {
-      window.scrollTo(0, 0);
-    }
+    if (to !== "/") window.scrollTo(0, 0);
   }, []);
 
   useEffect(() => {
