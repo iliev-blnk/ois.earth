@@ -842,7 +842,11 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const on = () => { setRoute(window.location.hash.replace(/^#/, "") || "/"); window.scrollTo(0, 0); };
+    const on = () => {
+      const r = window.location.hash.replace(/^#/, "") || "/";
+      setRoute(r);
+      if (r !== "/") window.scrollTo(0, 0);
+    };
     window.addEventListener("hashchange", on);
     return () => window.removeEventListener("hashchange", on);
   }, []);
