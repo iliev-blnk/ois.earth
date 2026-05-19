@@ -146,8 +146,12 @@
     .text-page { max-width: 100%; }
     .text-page .row { font-size: 12px; }
 
-    /* Centering wrappers: don't force full viewport height on mobile */
-    .text-page-centered { min-height: unset !important; padding: 32px 0; }
+    /* Centering wrappers: stack naturally on mobile, no forced height */
+    .text-page-centered { display: block; min-height: 0; padding: 32px 0; }
+
+    /* About/Contact rows: stack on mobile so long values don't clip */
+    .text-page .row { flex-direction: column; gap: 2px; }
+    .text-page .row span:last-child { color: var(--ink); }
 
     /* Checkout */
     .checkout-grid { grid-template-columns: 1fr; }
@@ -205,6 +209,12 @@
   .home .tile:nth-child(even) { transform: translateY(100px); }
 
   /* ---------- text pages ---------- */
+  .text-page-centered {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 48px);
+  }
   .text-page { max-width: 520px; margin: 0 auto; }
   .text-page.wide { max-width: 100%; width: 100%; }
   .text-page p { margin-bottom: 1em; }
@@ -454,8 +464,8 @@
   .zoom-img { max-width: 100%; max-height: 100dvh; object-fit: contain; pointer-events: none; }
 
   /* ---------- page fade ---------- */
-  @keyframes pageFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-  .page-fade { animation: pageFadeIn 200ms ease; }
+  @keyframes pageFadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .page-fade { animation: pageFadeIn 150ms ease; }
 </style>
 </head>
 <body>

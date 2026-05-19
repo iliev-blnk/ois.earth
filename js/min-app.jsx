@@ -534,7 +534,7 @@ function Track({ lang }) {
   };
 
   return (
-    <div className="text-page-centered" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "calc(100vh - 48px)" }}>
+    <div className="text-page-centered">
     <div className="text-page">
       <p>{t.label}</p>
       <div className="track-input">
@@ -580,13 +580,15 @@ const LOOKBOOK_VOLS = [
 ];
 
 function Lookbook() {
+  const [zoomed, setZoomed] = useState(null);
   return (
     <div>
+      {zoomed && <ImageZoom src={zoomed} alt="Lookbook" onClose={() => setZoomed(null)} />}
       {LOOKBOOK_VOLS.map((v) => (
         <div key={v.vol}>
           <div className="lookbook">
             {v.photos.map((src, i) => (
-              <img key={i} src={src} alt={v.vol + " photo " + (i + 1)} className={"lb-img" + (i % 3 === 0 ? " full" : "")} />
+              <img key={i} src={src} alt={v.vol + " photo " + (i + 1)} className={"lb-img" + (i % 3 === 0 ? " full" : "")} onClick={() => setZoomed(src)} style={{ cursor: "zoom-in" }} />
             ))}
           </div>
           <div className="text-page" style={{ marginTop: 32, marginBottom: 64 }}>
@@ -629,7 +631,7 @@ function About({ lang }) {
   };
 
   return (
-    <div className="text-page-centered" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "calc(100vh - 48px)" }}>
+    <div className="text-page-centered">
       <div className="text-page">
         {t.paras.map((p, i) => (
           <p key={i} style={{ textTransform: "none", fontSize: 14, lineHeight: 1.7, marginTop: i === 0 ? 0 : 14 }}>{p}</p>
@@ -668,7 +670,7 @@ function Contact({ lang }) {
   ];
 
   return (
-    <div className="text-page-centered" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "calc(100vh - 48px)" }}>
+    <div className="text-page-centered">
       <div className="text-page">
         {emails.map(({ addr, label }) => (
           <div key={addr} className="row" onClick={() => copy(addr)} style={{ cursor: "pointer" }}>
