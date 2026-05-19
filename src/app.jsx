@@ -1,4 +1,5 @@
-const { useState, useEffect, useLayoutEffect, useCallback, useMemo, useRef } = React;
+import React, { useState, useEffect, useLayoutEffect, useCallback, useMemo, useRef } from 'react';
+import { OIS_DATA } from './data.js';
 
 let splashSeen = false;
 
@@ -105,12 +106,27 @@ function Shell({ route, navigate, children, lang, setLang }) {
   );
 }
 
+function Picture({ src, alt, className, loading = 'lazy', style, onClick }) {
+  const dot = src.lastIndexOf('.');
+  const base = src.slice(0, dot);
+  return (
+    <picture>
+      <source
+        type="image/webp"
+        srcSet={`${base}-400.webp 400w, ${base}-800.webp 800w, ${base}.webp 1600w`}
+        sizes="(max-width: 780px) 100vw, 520px"
+      />
+      <img src={src} alt={alt} className={className} loading={loading} style={style} onClick={onClick} />
+    </picture>
+  );
+}
+
 function Home({ navigate }) {
   return (
     <div className="home">
       {OIS_DATA.products.map((p) => (
         <a key={p.id} className="tile" href={"#/p/" + p.id} onClick={(e) => { e.preventDefault(); navigate("/p/" + p.id); }}>
-          <img src={p.images[0]} alt={p.name + " " + p.colorName} className="tile-img" loading="lazy" />
+          <Picture src={p.images[0]} alt={p.name + " " + p.colorName} className="tile-img" loading="lazy" />
           <div className="meta">
             <span>{p.name}</span>
             <span style={{ color: "var(--muted)" }}>₺{p.price}</span>
@@ -224,7 +240,7 @@ function PDP({ id, navigate, openDrawer, lang }) {
   return (
     <div className="pdp">
       <div className="pdp-media" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-        <img src={p.images[imgIdx]} alt={p.name} className="pdp-media-img" loading="eager" onClick={() => setZoomed(true)} style={{ cursor: "zoom-in" }} />
+        <Picture src={p.images[imgIdx]} alt={p.name} className="pdp-media-img" loading="eager" onClick={() => setZoomed(true)} style={{ cursor: "zoom-in" }} />
         {total > 1 && (
           <div className="pdp-nav pdp-nav-desktop">
             <button onClick={prev}>←</button>
@@ -588,7 +604,7 @@ function Lookbook() {
         <div key={v.vol}>
           <div className="lookbook">
             {v.photos.map((src, i) => (
-              <img key={i} src={src} alt={v.vol + " photo " + (i + 1)} className={"lb-img" + (i % 3 === 0 ? " full" : "")} onClick={() => setZoomed(src)} style={{ cursor: "zoom-in" }} />
+              <Picture key={i} src={src} alt={v.vol + " photo " + (i + 1)} className={"lb-img" + (i % 3 === 0 ? " full" : "")} onClick={() => setZoomed(src)} style={{ cursor: "zoom-in" }} />
             ))}
           </div>
           <div className="text-page" style={{ marginTop: 32, marginBottom: 64 }}>
@@ -914,4 +930,4 @@ function App() {
   );
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+export default App;

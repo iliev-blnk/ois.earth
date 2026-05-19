@@ -1,4 +1,4 @@
-window.OIS_DATA = {
+export const OIS_DATA = {
   products: [
     {
       id: "essential-hoodie-white",
