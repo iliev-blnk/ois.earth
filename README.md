@@ -128,24 +128,54 @@ To deploy: push to `master`.
 
 ## To-do
 
+### Bugs
+- [x] Missing modal CSS — SizeGuideModal renders unstyled (`.modal`, `.modal-scrim`, `.size-table` not defined)
+- [x] Turkish About copy still says "spor giyim stüdyosu" (sportswear) — needs "stüdyo" only
+- [x] Checkout order number regenerates on every re-render — moved to `useState`
+- [x] Cart "Remove" button hardcoded English — now translated in TR mode
+- [x] Swatch grouping uses `name` field — fixed with `variantGroup` field in data
+- [x] `lb-img full wide` — removed nonexistent `.wide` class
+- [x] Cart/Checkout total inconsistency — prices are KDV-inclusive, removed separate tax line
+
 ### Core
 - [ ] Real payment integration (iyzico)
 - [ ] Real order management + order tracking backend
 - [ ] Email confirmation on order placed
-- [ ] Inventory / stock per size (????)
-- [ ] Sold out state on sizes and products
+- [ ] Inventory / stock per size (per-size quantities in data)
 
 ### Shop
-- [ ] More products
-- [ ] Product back images for black hoodie
-- [ ] Size guide
-- [ ] Currency toggle (TL / USD / EUR)
+- [ ] More products — crewneck, tee, sweatpant
+- [ ] Product back image for white hoodie (only black has a back shot)
+- [ ] Wishlist / save for later (localStorage, no backend needed)
+- [ ] Notify me on sold-out sizes — email capture form
+
+### UX
+- [ ] Product video support on PDP (autoplay loop, muted)
 
 ### Content
 - [ ] Lookbook Vol. 02+
+- [ ] About page — team / studio photos
+- [ ] Turkish copy native speaker review
 
 ### Tech
-- [ ] Move from CDN React + Babel to a proper build (Vite)
-- [ ] Image optimization (WebP, lazy loading)
-- [ ] SEO meta tags (og:image, description per page)
-- [ ] Analytics
+- [ ] Move from CDN React + Babel to Vite build
+- [ ] Image optimization (WebP conversion, responsive srcset)
+- [ ] `og:url` and `twitter:card` meta tags for proper social sharing
+- [ ] Analytics (Plausible or GA4)
+
+### Done ✓
+- [x] All bugs above
+- [x] Fullscreen image zoom on PDP — tap/click image, Escape to close
+- [x] Page fade transition — 200ms fade+slide on every route change
+- [x] Sold out state on sizes — data-driven `soldOut` array per product
+- [x] Size guide modal — EN/TR, chest + length measurements
+- [x] SEO meta tags — dynamic title, og:title/description/image per route
+- [x] Image lazy loading
+- [x] Mobile PDP image swipe (touch gesture, replaces arrow buttons on mobile)
+- [x] Mobile responsive layout — header, scrollable nav, single-col grid
+
+---
+
+## Backlog
+
+- Currency toggle (TL / USD / EUR)

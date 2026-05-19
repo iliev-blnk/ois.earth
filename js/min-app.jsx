@@ -1,4 +1,4 @@
-const { useState, useEffect, useCallback, useMemo } = React;
+const { useState, useEffect, useCallback, useMemo, useRef } = React;
 
 const CART_KEY = "ois_cart_v1";
 const cart = {
@@ -108,7 +108,7 @@ function Home({ navigate }) {
     <div className="home">
       {OIS_DATA.products.map((p) => (
         <a key={p.id} className="tile" href={"#/p/" + p.id} onClick={(e) => { e.preventDefault(); navigate("/p/" + p.id); }}>
-          <img src={p.images[0]} alt={p.name + " " + p.colorName} className="tile-img" />
+          <img src={p.images[0]} alt={p.name + " " + p.colorName} className="tile-img" loading="lazy" />
           <div className="meta">
             <span>{p.name}</span>
             <span style={{ color: "var(--muted)" }}>₺{p.price}</span>
@@ -119,12 +119,72 @@ function Home({ navigate }) {
   );
 }
 
+const SIZE_GUIDE = [
+  { size: "XS", chest: "88–93", length: "65" },
+  { size: "S",  chest: "94–99", length: "67" },
+  { size: "M",  chest: "100–105", length: "69" },
+  { size: "L",  chest: "106–111", length: "71" },
+  { size: "XL", chest: "112–117", length: "73" },
+  { size: "XXL", chest: "118–124", length: "75" },
+];
+
+function SizeGuideModal({ onClose, lang }) {
+  const t = lang === "tr" ? { title: "Beden Rehberi", chest: "Göğüs (cm)", length: "Uzunluk (cm)", note: "Ölçüler vücuda aittir." }
+    : { title: "Size Guide", chest: "Chest (cm)", length: "Length (cm)", note: "Measurements are body measurements." };
+  return (
+    <>
+      <div className="modal-scrim" onClick={onClose} />
+      <div className="modal">
+        <div className="modal-head">
+          <span>{t.title}</span>
+          <button onClick={onClose}>×</button>
+        </div>
+        <table className="size-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>{t.chest}</th>
+              <th>{t.length}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {SIZE_GUIDE.map((r) => (
+              <tr key={r.size}>
+                <td>{r.size}</td>
+                <td>{r.chest}</td>
+                <td>{r.length}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p className="modal-note">{t.note}</p>
+      </div>
+    </>
+  );
+}
+
+function ImageZoom({ src, alt, onClose }) {
+  useEffect(() => {
+    const onKey = (e) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+  return (
+    <div className="zoom-wrap" onClick={onClose}>
+      <img src={src} alt={alt} className="zoom-img" />
+    </div>
+  );
+}
+
 function PDP({ id, navigate, openDrawer, lang }) {
   const p = OIS_DATA.products.find((x) => x.id === id);
   const [imgIdx, setImgIdx] = useState(0);
   const [expanded, setExpanded] = useState(false);
   const [size, setSize] = useState(null);
-  const variants = useMemo(() => OIS_DATA.products.filter((x) => x.name === p?.name), [p?.name]);
+  const [guideOpen, setGuideOpen] = useState(false);
+  const [zoomed, setZoomed] = useState(false);
+  const variants = useMemo(() => OIS_DATA.products.filter((x) => x.variantGroup === p?.variantGroup), [p?.variantGroup]);
+  const soldOut = useMemo(() => new Set(p?.soldOut || []), [p]);
 
   if (!p) return <div>Not found.</div>;
 
@@ -132,12 +192,21 @@ function PDP({ id, navigate, openDrawer, lang }) {
   const prev = () => setImgIdx((imgIdx - 1 + total) % total);
   const next = () => setImgIdx((imgIdx + 1) % total);
 
+  const touchStartX = useRef(null);
+  const onTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; };
+  const onTouchEnd = (e) => {
+    if (touchStartX.current == null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(dx) > 40) dx < 0 ? next() : prev();
+    touchStartX.current = null;
+  };
+
   const t = lang === "tr" ? {
     color: "Renk", size: "Beden", selectSize: "Beden seçin", add: "Ekle",
-    details: "Detaylar", care: "Bakım", shipping: "Kargo",
+    details: "Detaylar", care: "Bakım", shipping: "Kargo", sizeGuide: "Beden rehberi",
   } : {
     color: "Color", size: "Size", selectSize: "Select size", add: "Add",
-    details: "Details", care: "Care", shipping: "Shipping",
+    details: "Details", care: "Care", shipping: "Shipping", sizeGuide: "Size guide",
   };
 
   const onAdd = () => {
@@ -152,10 +221,10 @@ function PDP({ id, navigate, openDrawer, lang }) {
 
   return (
     <div className="pdp">
-      <div className="pdp-media">
-        <img src={p.images[imgIdx]} alt={p.name} className="pdp-media-img" />
+      <div className="pdp-media" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+        <img src={p.images[imgIdx]} alt={p.name} className="pdp-media-img" loading="eager" onClick={() => setZoomed(true)} style={{ cursor: "zoom-in" }} />
         {total > 1 && (
-          <div className="pdp-nav">
+          <div className="pdp-nav pdp-nav-desktop">
             <button onClick={prev}>←</button>
             <button onClick={next}>→</button>
           </div>
@@ -194,11 +263,23 @@ function PDP({ id, navigate, openDrawer, lang }) {
           ) : (
             <>
               <div className="group">
-                <div className="group-label">{t.size}</div>
+                <div className="group-label" style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span>{t.size}</span>
+                  <button onClick={() => setGuideOpen(true)} style={{ color: "var(--muted)", textDecoration: "underline", textUnderlineOffset: 3 }}>{t.sizeGuide}</button>
+                </div>
                 <div className="options">
-                  {p.sizes.map((s) => (
-                    <button key={s} className={size === s ? "active" : ""} onClick={() => setSize(s)}>{s}</button>
-                  ))}
+                  {p.sizes.map((s) => {
+                    const out = soldOut.has(s);
+                    return (
+                      <button
+                        key={s}
+                        className={size === s ? "active" : ""}
+                        onClick={() => !out && setSize(s)}
+                        disabled={out}
+                        style={out ? { color: "var(--muted)", textDecoration: "line-through", cursor: "default", opacity: 0.4 } : {}}
+                      >{s}</button>
+                    );
+                  })}
                 </div>
               </div>
               <button className={"pdp-add-btn " + (!size ? "disabled" : "")} onClick={onAdd} disabled={!size}>
@@ -207,6 +288,8 @@ function PDP({ id, navigate, openDrawer, lang }) {
             </>
           )}
         </div>
+        {guideOpen && <SizeGuideModal onClose={() => setGuideOpen(false)} lang={lang} />}
+        {zoomed && <ImageZoom src={p.images[imgIdx]} alt={p.name} onClose={() => setZoomed(false)} />}
 
         <div style={{ marginTop: 32 }}>
           <details>
@@ -287,8 +370,8 @@ function Drawer({ open, onClose, navigate, lang }) {
 
 function Cart({ navigate, lang }) {
   const c = useCart();
-  const t = lang === "tr" ? { empty: "Çanta boş.", shop: "Alışverişe devam", checkout: "Ödemeye geç" }
-    : { empty: "Bag is empty.", shop: "Shop all", checkout: "Checkout" };
+  const t = lang === "tr" ? { empty: "Çanta boş.", shop: "Alışverişe devam", checkout: "Ödemeye geç", remove: "Kaldır" }
+    : { empty: "Bag is empty.", shop: "Shop all", checkout: "Checkout", remove: "Remove" };
 
   if (c.items.length === 0) {
     return (
@@ -321,7 +404,7 @@ function Cart({ navigate, lang }) {
                 <button onClick={() => c.setQty(i.key, i.qty - 1)}>−</button>
                 <span>{i.qty}</span>
                 <button onClick={() => c.setQty(i.key, i.qty + 1)}>+</button>
-                <button onClick={() => c.remove(i.key)} style={{ marginLeft: "auto" }}>Remove</button>
+                <button onClick={() => c.remove(i.key)} style={{ marginLeft: "auto" }}>{t.remove}</button>
               </div>
             </div>
           </div>
@@ -340,11 +423,8 @@ function Cart({ navigate, lang }) {
 function Checkout({ navigate, lang }) {
   const c = useCart();
   const [placed, setPlaced] = useState(false);
-  const shipCost = 0;
-  const tax = Math.round(c.subtotal() * 0.18);
-  const total = c.subtotal() + shipCost + tax;
-
-  const orderNum = "OIS-" + Math.floor(10000 + Math.random() * 90000);
+  const [orderNum] = useState("OIS-" + Math.floor(10000 + Math.random() * 90000));
+  const total = c.subtotal();
 
   if (placed) {
     return (
@@ -416,8 +496,8 @@ function Checkout({ navigate, lang }) {
         <div style={{ marginTop: 16 }}>
           <div style={{ display: "flex", justifyContent: "space-between", padding: "3px 0" }}><span style={{ color: "var(--muted)" }}>Subtotal</span><span>₺{c.subtotal()}</span></div>
           <div style={{ display: "flex", justifyContent: "space-between", padding: "3px 0" }}><span style={{ color: "var(--muted)" }}>Shipping</span><span>Ücretsiz</span></div>
-          <div style={{ display: "flex", justifyContent: "space-between", padding: "3px 0" }}><span style={{ color: "var(--muted)" }}>KDV (%18)</span><span>₺{tax}</span></div>
           <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 0 0", marginTop: 4, borderTop: "1px solid #000" }}><span>Total</span><span>₺{total}</span></div>
+          <div style={{ color: "var(--muted)", fontSize: 9, marginTop: 6 }}>Fiyatlar KDV dahildir.</div>
         </div>
       </aside>
     </div>
@@ -502,7 +582,7 @@ function Lookbook() {
         <div key={v.vol}>
           <div className="lookbook">
             {v.photos.map((src, i) => (
-              <img key={i} src={src} alt={v.vol + " photo " + (i + 1)} className={"lb-img" + (i % 3 === 0 ? " full wide" : "")} />
+              <img key={i} src={src} alt={v.vol + " photo " + (i + 1)} className={"lb-img" + (i % 3 === 0 ? " full" : "")} />
             ))}
           </div>
           <div className="text-page" style={{ marginTop: 32, marginBottom: 64 }}>
@@ -518,7 +598,7 @@ function Lookbook() {
 function About({ lang }) {
   const t = lang === "tr" ? {
     paras: [
-      "ois Istanbul'da kurulmuş küçük bir spor giyim stüdyosudur.",
+      "ois Istanbul'da kurulmuş küçük bir stüdyodur.",
       "Bir kazak, bir sweatshirt, bir tişört, bir eşofman — bir seferde bir parça üretiyoruz.",
       "Koleksiyon yapmıyoruz.",
       "Bir parça hazır olduğunda piyasaya çıkarıyoruz ve giyildiği sürece üretiyoruz.",
@@ -531,7 +611,7 @@ function About({ lang }) {
     shippingVal: "Ücretsiz", returnsVal: "14 gün içinde iade", careVal: "Soğuk yıkayın, serin kurutun",
   } : {
     paras: [
-      "ois is a small sportswear studio based in Istanbul.",
+      "ois is a small studio based in Istanbul.",
       "We make one hoodie, one crewneck, one tee, one sweatpant — at a time.",
       "We don't run seasons.",
       "We release a piece when it's ready and we keep making it as long as it's worn.",
@@ -758,6 +838,28 @@ function App() {
   }, []);
 
   useEffect(() => {
+    let title = "ois.earth";
+    let desc = "A small studio based in Istanbul.";
+    let img = "https://ois.earth/images/products/white-front.png";
+    if (route.startsWith("/p/")) {
+      const p = OIS_DATA.products.find((x) => x.id === route.slice(3));
+      if (p) { title = `${p.name} — ois.earth`; desc = p.details; img = "https://ois.earth/" + p.images[0]; }
+    } else if (route === "/lookbook") { title = "Lookbook — ois.earth"; desc = "OiS lookbook, shot in Istanbul."; }
+    else if (route === "/about") { title = "About — ois.earth"; }
+    else if (route === "/cart") { title = "Bag — ois.earth"; }
+    document.title = title;
+    const setMeta = (name, val, attr = "name") => {
+      let el = document.querySelector(`meta[${attr}="${name}"]`);
+      if (!el) { el = document.createElement("meta"); el.setAttribute(attr, name); document.head.appendChild(el); }
+      el.setAttribute("content", val);
+    };
+    setMeta("description", desc);
+    setMeta("og:title", title, "property");
+    setMeta("og:description", desc, "property");
+    setMeta("og:image", img, "property");
+  }, [route]);
+
+  useEffect(() => {
     const on = (e) => {
       if (!e.data) return;
       if (e.data.type === "__activate_edit_mode") setTweaksOpen(true);
@@ -781,14 +883,16 @@ function App() {
   else if (route === "/contact") page = <Contact lang={lang} />;
   else page = <div className="text-page"><p>Not found.</p></div>;
 
+  const fadedPage = <div key={route} className="page-fade">{page}</div>;
+
   return (
     <>
       {isHome ? (
         <HomeSplash>
-          <Shell route={route} navigate={navigate} lang={lang} setLang={changeLang}>{page}</Shell>
+          <Shell route={route} navigate={navigate} lang={lang} setLang={changeLang}>{fadedPage}</Shell>
         </HomeSplash>
       ) : (
-        <Shell route={route} navigate={navigate} lang={lang} setLang={changeLang}>{page}</Shell>
+        <Shell route={route} navigate={navigate} lang={lang} setLang={changeLang}>{fadedPage}</Shell>
       )}
       <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} navigate={navigate} lang={lang} />
       <Tweaks open={tweaksOpen} lang={lang} setLang={changeLang} />

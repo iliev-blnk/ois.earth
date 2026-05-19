@@ -4,6 +4,11 @@
 <meta charset="utf-8" />
 <title>ois.earth</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="A small studio based in Istanbul." />
+<meta property="og:title" content="ois.earth" />
+<meta property="og:description" content="A small studio based in Istanbul." />
+<meta property="og:image" content="https://ois.earth/images/products/white-front.png" />
+<meta property="og:type" content="website" />
 <link rel="icon" type="image/jpeg" href="favicon.jpg" />
 <style>
   :root {
@@ -243,6 +248,7 @@
   }
   .pdp-nav button { pointer-events: auto; color: var(--muted); font-size: 20px; }
   .pdp-nav button:hover { color: var(--ink); }
+  @media (max-width: 780px) { .pdp-nav-desktop { display: none; } }
   .pdp-dots {
     display: flex;
     justify-content: center;
@@ -420,6 +426,36 @@
   body.size-sm { font-size: 9px; }
   body.size-md { font-size: 10px; }
   body.size-lg { font-size: 12px; }
+
+  /* ---------- modal ---------- */
+  .modal-scrim { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 300; }
+  .modal {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    z-index: 310; background: var(--paper); color: var(--ink);
+    border: 1px solid currentColor; padding: 24px;
+    width: min(400px, calc(100vw - 32px));
+  }
+  .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .modal-head button { font-size: 18px; line-height: 1; }
+  .size-table { width: 100%; border-collapse: collapse; }
+  .size-table th, .size-table td { text-align: left; padding: 7px 0; border-bottom: 1px solid #eee; }
+  .size-table th { color: var(--muted); }
+  .modal-note { color: var(--muted); margin-top: 12px; }
+  body.theme-inverse .size-table th,
+  body.theme-inverse .size-table td { border-color: #222; }
+
+  /* ---------- zoom ---------- */
+  .zoom-wrap {
+    position: fixed; inset: 0; z-index: 400;
+    background: var(--paper);
+    display: flex; align-items: center; justify-content: center;
+    cursor: zoom-out;
+  }
+  .zoom-img { max-width: 100%; max-height: 100dvh; object-fit: contain; pointer-events: none; }
+
+  /* ---------- page fade ---------- */
+  @keyframes pageFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .page-fade { animation: pageFadeIn 200ms ease; }
 </style>
 </head>
 <body>
