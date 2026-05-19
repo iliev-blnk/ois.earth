@@ -404,8 +404,9 @@
   /* ---------- lookbook ---------- */
   .lookbook { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   @media (max-width: 780px) { .lookbook { grid-template-columns: 1fr; } }
-  .lookbook .lb-img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
+  .lookbook .lb-img { width: 100%; aspect-ratio: 3/4; overflow: hidden; }
   .lookbook .lb-img.full { grid-column: 1 / -1; aspect-ratio: 16/10; }
+  .lookbook .lb-img picture, .lookbook .lb-img img { width: 100%; height: 100%; display: block; object-fit: cover; }
 
   /* ---------- tweaks ---------- */
   .tweaks {

@@ -604,7 +604,9 @@ function Lookbook() {
         <div key={v.vol}>
           <div className="lookbook">
             {v.photos.map((src, i) => (
-              <Picture key={i} src={src} alt={v.vol + " photo " + (i + 1)} className={"lb-img" + (i % 3 === 0 ? " full" : "")} onClick={() => setZoomed(src)} style={{ cursor: "zoom-in" }} />
+              <div key={i} className={"lb-img" + (i % 3 === 0 ? " full" : "")} onClick={() => setZoomed(src)} style={{ cursor: "zoom-in" }}>
+                <Picture src={src} alt={v.vol + " photo " + (i + 1)} />
+              </div>
             ))}
           </div>
           <div className="text-page" style={{ marginTop: 32, marginBottom: 64 }}>
