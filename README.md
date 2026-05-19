@@ -2,7 +2,7 @@
 
 Single-page storefront for **OiS** — a small studio based in Istanbul.
 
-Built as a static HTML/JS site with no build step. React + Babel loaded from CDN. All state is in-memory or `localStorage`.
+Built with React + Vite. All state is in-memory or `localStorage`.
 
 ---
 
@@ -10,14 +10,16 @@ Built as a static HTML/JS site with no build step. React + Babel loaded from CDN
 
 | Layer | Choice |
 |---|---|
-| Markup | Single `index.html` |
+| Markup | `index.html` |
 | Styles | Vanilla CSS (inline `<style>`) |
-| JS | React 18 via CDN, JSX compiled by Babel standalone |
-| Data | `js/data.js` — `window.OIS_DATA` global |
-| App logic | `js/min-app.jsx` — all components in one file |
+| JS | React 18, JSX via Vite + `@vitejs/plugin-react` |
+| Data | `src/data.js` — named export `OIS_DATA` |
+| App logic | `src/app.jsx` — all components in one file |
 | Routing | Hash-based (`#/`, `#/p/:id`, `#/about`, etc.) |
 | Cart | `localStorage` (`ois_cart_v1`) |
 | Language | `localStorage` (`ois_lang`) — EN / TR |
+| Build | Vite — `npm run build` → `dist/` |
+| Deploy | GitHub Actions → `gh-pages` branch → ois.earth |
 
 ---
 
@@ -25,23 +27,42 @@ Built as a static HTML/JS site with no build step. React + Babel loaded from CDN
 
 ```
 ois.earth/
-├── index.html              # Entry point + all CSS
-├── favicon.jpg
-├── js/
-│   ├── data.js             # Products, collections, drops
-│   └── min-app.jsx         # All React components
-└── images/
-    ├── products/
-    │   ├── white-front.png
-    │   ├── white-back.png
-    │   ├── black-front.png
-    │   └── black-back.png
-    └── lookbook/
-        └── vol-01/
-            ├── lookbook1.jpg
-            ├── lookbook2.jpg
-            ├── lookbook3.jpg
-            └── lookbook4.jpg
+├── index.html                  # Entry point + all CSS
+├── vite.config.js
+├── package.json
+├── src/
+│   ├── main.jsx                # ReactDOM.createRoot
+│   ├── app.jsx                 # All React components
+│   └── data.js                 # Products, collections, drops
+├── public/
+│   ├── favicon.jpg
+│   └── images/
+│       ├── products/
+│       │   ├── white-front.png / .webp / -400.webp / -800.webp
+│       │   ├── white-back.png  / …
+│       │   ├── black-front.png / …
+│       │   └── black-back.png  / …
+│       └── lookbook/
+│           └── vol-01/
+│               ├── lookbook1.jpg / .webp / -400.webp / -800.webp
+│               └── …
+├── scripts/
+│   └── optimize-images.js      # PNG/JPG → WebP (400w, 800w, full)
+└── .github/
+    └── workflows/
+        └── deploy.yml          # Build + deploy to gh-pages
+```
+
+---
+
+## Dev
+
+```bash
+npm install
+npm run dev        # localhost:5173
+npm run build      # dist/
+npm run preview    # preview dist/
+npm run images     # regenerate WebP variants in public/images/
 ```
 
 ---
@@ -63,7 +84,7 @@ ois.earth/
 
 ## Adding a product
 
-Edit `js/data.js` — add an entry to the `products` array:
+Edit `src/data.js` — add an entry to the `products` array:
 
 ```js
 {
@@ -84,13 +105,13 @@ Edit `js/data.js` — add an entry to the `products` array:
 }
 ```
 
-Images should be PNGs with transparent backgrounds placed in `images/products/`.
+Images go in `public/images/products/` as PNGs with transparent backgrounds. Run `npm run images` to generate WebP variants.
 
 ---
 
 ## Adding lookbook photos
 
-Add images to `images/lookbook/vol-XX/` then update `LOOKBOOK_VOLS` in `min-app.jsx`:
+Add images to `public/images/lookbook/vol-XX/` then update `LOOKBOOK_VOLS` in `src/app.jsx`:
 
 ```js
 {
@@ -103,11 +124,13 @@ Add images to `images/lookbook/vol-XX/` then update `LOOKBOOK_VOLS` in `min-app.
 }
 ```
 
+Run `npm run images` to generate WebP variants.
+
 ---
 
 ## Order tracking
 
-Real orders are not wired up yet. To add a test/real order, add to the `TEST_ORDERS` object in `min-app.jsx`:
+Real orders are not wired up yet. To add a test/real order, add to the `TEST_ORDERS` object in `src/app.jsx`:
 
 ```js
 const TEST_ORDERS = {
@@ -122,20 +145,13 @@ const TEST_ORDERS = {
 
 Live: **ois.earth**
 
-To deploy: push to `master`.
+Push to `master` → GitHub Actions builds `dist/` → deploys to `gh-pages` branch → served at ois.earth via CNAME.
+
+GitHub Pages source must be set to the `gh-pages` branch (Settings → Pages).
 
 ---
 
 ## To-do
-
-### Bugs
-- [x] Missing modal CSS — SizeGuideModal renders unstyled (`.modal`, `.modal-scrim`, `.size-table` not defined)
-- [x] Turkish About copy still says "spor giyim stüdyosu" (sportswear) — needs "stüdyo" only
-- [x] Checkout order number regenerates on every re-render — moved to `useState`
-- [x] Cart "Remove" button hardcoded English — now translated in TR mode
-- [x] Swatch grouping uses `name` field — fixed with `variantGroup` field in data
-- [x] `lb-img full wide` — removed nonexistent `.wide` class
-- [x] Cart/Checkout total inconsistency — prices are KDV-inclusive, removed separate tax line
 
 ### Core
 - [ ] Real payment integration (iyzico)
@@ -158,20 +174,20 @@ To deploy: push to `master`.
 - [ ] Turkish copy native speaker review
 
 ### Tech
-- [ ] Move from CDN React + Babel to Vite build
-- [ ] Image optimization (WebP conversion, responsive srcset)
 - [ ] `og:url` and `twitter:card` meta tags for proper social sharing
 - [ ] Analytics (Plausible or GA4)
 
 ### Done ✓
-- [x] All bugs above
+- [x] Vite build pipeline (replaces CDN React + Babel)
+- [x] WebP image optimization — 400w / 800w / full-size variants, `<picture>` srcset
+- [x] GitHub Actions CI/CD — builds and deploys on push to master
 - [x] Fullscreen image zoom on PDP — tap/click image, Escape to close
 - [x] Page fade transition — 200ms fade+slide on every route change
 - [x] Sold out state on sizes — data-driven `soldOut` array per product
 - [x] Size guide modal — EN/TR, chest + length measurements
 - [x] SEO meta tags — dynamic title, og:title/description/image per route
 - [x] Image lazy loading
-- [x] Mobile PDP image swipe (touch gesture, replaces arrow buttons on mobile)
+- [x] Mobile PDP image swipe (touch gesture)
 - [x] Mobile responsive layout — header, scrollable nav, single-col grid
 
 ---
