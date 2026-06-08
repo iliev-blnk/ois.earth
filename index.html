@@ -137,11 +137,6 @@
     /* Splash */
     .splash .logo { font-size: 20vw; }
 
-    /* PDP */
-    .pdp { gap: 24px; padding-bottom: 40px; }
-    .pdp-media { max-width: 100%; }
-    .pdp-info { max-width: 100%; }
-
     /* Text pages */
     .text-page { max-width: 100%; }
     .text-page .row { font-size: 12px; }
@@ -177,8 +172,6 @@
   .side-right a, .side-right button { color: var(--muted); transition: color 120ms linear; }
   .side-right a:hover, .side-right button:hover { color: var(--ink); }
   .side-right .cart-count { color: var(--ink); }
-
-  main { padding: 0; }
 
   /* ---------- home grid ---------- */
   .home {
@@ -232,15 +225,15 @@
     gap: 40px;
     min-height: 100vh;
     position: relative;
+    --pdp-w: 520px;
   }
-  @media (max-width: 780px) { .pdp { gap: 20px; } }
   .pdp-media {
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
     width: 100%;
-    max-width: 520px;
+    max-width: var(--pdp-w);
   }
   .pdp-media-img {
     width: 100%;
@@ -263,18 +256,18 @@
   .pdp-dots {
     display: flex;
     justify-content: center;
-    gap: 8px;
-    margin-top: 12px;
+    gap: 10px;
+    margin-top: 16px;
   }
   .pdp-dots button {
-    width: 6px; height: 6px; border-radius: 50%; background: #ccc;
+    width: 7px; height: 7px; border-radius: 50%; background: #ccc;
     padding: 0; border: 0; cursor: pointer;
   }
   .pdp-dots button.active { background: #000; }
 
-  .pdp-info { text-align: center; max-width: 320px; }
-  .pdp-info h1 { font-weight: normal; font-size: 13px; margin-bottom: 8px; }
-  .pdp-info .price { font-size: 14px; margin-bottom: 32px; }
+  .pdp-info { text-align: center; width: 100%; max-width: var(--pdp-w); }
+  .pdp-info h1 { font-weight: normal; font-size: 18px; letter-spacing: 0.04em; margin-bottom: 10px; }
+  .pdp-info .price { font-size: 15px; margin-bottom: 36px; }
   .pdp-info .group { margin-bottom: 24px; }
   .pdp-info .group-label { color: var(--muted); margin-bottom: 8px; font-size: 10px; }
   .pdp-info .options { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
@@ -287,7 +280,7 @@
   .pdp-info .swatch.active { outline: 1px solid #000; outline-offset: 2px; }
 
   .pdp-expand-btn {
-    font-size: 24px; line-height: 1; color: var(--ink); padding: 8px;
+    font-size: 28px; line-height: 1; color: var(--ink); padding: 8px;
     transition: opacity 120ms linear;
   }
   .pdp-expand-btn:hover { opacity: 0.5; }
@@ -300,12 +293,18 @@
   .pdp-add-btn:hover { color: var(--muted); }
   .pdp-add-btn.disabled { opacity: 0.4; cursor: default; }
 
-  .pdp-info details { border-top: 1px solid #eee; padding: 10px 0; text-align: left; }
-  .pdp-info details summary { list-style: none; cursor: pointer; color: var(--muted); display: flex; justify-content: space-between; font-size: 10px; }
+  .pdp-info details { border-top: 1px solid #eee; padding: 14px 0; text-align: left; }
+  .pdp-info details summary { list-style: none; cursor: pointer; color: var(--muted); display: flex; justify-content: space-between; font-size: 12px; }
   .pdp-info details summary::-webkit-details-marker { display: none; }
   .pdp-info details[open] summary::after { content: "−"; }
   .pdp-info details summary::after { content: "+"; }
-  .pdp-info details p { color: var(--muted); padding-top: 8px; text-transform: none; font-size: 10px; line-height: 1.5; }
+  .pdp-info details p { color: var(--muted); padding-top: 10px; text-transform: none; font-size: 11px; line-height: 1.6; }
+
+  @media (max-width: 780px) {
+    .pdp { min-height: 0; justify-content: flex-start; gap: 28px; padding: 8px 0 0; }
+    .pdp-info h1 { font-size: 16px; }
+    .pdp-info .price { font-size: 14px; margin-bottom: 28px; }
+  }
 
   .cart-count { display: inline-block; transition: transform 160ms linear; }
   .cart-count.bump { transform: scale(1.4); }
