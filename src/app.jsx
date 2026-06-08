@@ -138,12 +138,10 @@ function Home({ navigate }) {
 }
 
 const SIZE_GUIDE = [
-  { size: "XS", chest: "88–93", length: "65" },
   { size: "S",  chest: "94–99", length: "67" },
   { size: "M",  chest: "100–105", length: "69" },
   { size: "L",  chest: "106–111", length: "71" },
   { size: "XL", chest: "112–117", length: "73" },
-  { size: "XXL", chest: "118–124", length: "75" },
 ];
 
 function SizeGuideModal({ onClose, lang }) {
