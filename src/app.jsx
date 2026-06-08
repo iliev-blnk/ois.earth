@@ -3,47 +3,15 @@ import { OIS_DATA } from './data.js';
 
 let splashSeen = false;
 
-const CART_KEY = "ois_cart_v1";
-const cart = {
-  items: [],
-  ls: new Set(),
-  load() { try { this.items = JSON.parse(localStorage.getItem(CART_KEY) || "[]"); } catch { this.items = []; } },
-  save() { localStorage.setItem(CART_KEY, JSON.stringify(this.items)); this.ls.forEach((f) => f()); },
-  add(p, size) {
-    const key = p.id + "::" + size;
-    const e = this.items.find((i) => i.key === key);
-    if (e) e.qty += 1;
-    else this.items.push({ key, id: p.id, size, qty: 1, name: p.name, colorName: p.colorName, price: p.price, colorway: p.colorway, thumb: p.images[0] });
-    this.save();
-  },
-  remove(k) { this.items = this.items.filter((i) => i.key !== k); this.save(); },
-  setQty(k, q) { const i = this.items.find((x) => x.key === k); if (i) { i.qty = Math.max(1, q); this.save(); } },
-  count() { return this.items.reduce((a, b) => a + b.qty, 0); },
-  subtotal() { return this.items.reduce((a, b) => a + b.qty * b.price, 0); },
-  sub(f) { this.ls.add(f); return () => this.ls.delete(f); }
-};
-cart.load();
-
-function useCart() {
-  const [, f] = useState(0);
-  useEffect(() => cart.sub(() => f((n) => n + 1)), []);
-  return cart;
-}
-
-function phClass(cw) {
-  return cw === "ink" ? "dark" : cw === "cream" ? "cream" : "";
-}
-
 function Shell({ route, navigate, children, lang, setLang }) {
-  const c = useCart();
   const is = (r) => route === r || (r !== "/" && route.startsWith(r));
 
   const t = lang === "tr" ? {
     shop: "Mağaza", lookbook: "Lookbook", about: "Hakkında", track: "Takip", contact: "İletişim",
-    cart: "Çanta", instagram: "Instagram",
+    instagram: "Instagram",
   } : {
     shop: "Shop", lookbook: "Lookbook", about: "About", track: "Track", contact: "Contact",
-    cart: "Cart", instagram: "Instagram",
+    instagram: "Instagram",
   };
 
   const homeClick = (e) => { e.preventDefault(); if (route === "/") { window.scrollTo({ top: 0, behavior: "smooth" }); } else { navigate("/"); } };
@@ -55,9 +23,6 @@ function Shell({ route, navigate, children, lang, setLang }) {
         <a href="#/" onClick={homeClick} className="mobile-brand">OiS <span style={{ color: "var(--muted)" }}>earth</span></a>
         <div className="mobile-header-right">
           <button onClick={() => setLang(lang === "en" ? "tr" : "en")} style={{ color: "var(--muted)" }}>{lang === "en" ? "TR" : "EN"}</button>
-          <a href="#/cart" onClick={(e) => { e.preventDefault(); navigate("/cart"); }}>
-            {t.cart} (<span className="cart-count">{c.count()}</span>)
-          </a>
         </div>
       </div>
 
@@ -90,9 +55,6 @@ function Shell({ route, navigate, children, lang, setLang }) {
       <main>{children}</main>
 
       <aside className="side-right">
-        <a href="#/cart" onClick={(e) => { e.preventDefault(); navigate("/cart"); }}>
-          {t.cart} (<span className="cart-count">{c.count()}</span>)
-        </a>
         <a href="https://instagram.com/ois.earth" target="_blank" rel="noreferrer">{t.instagram}</a>
         <a href="#/contact" onClick={(e) => { e.preventDefault(); navigate("/contact"); }}>{t.contact}</a>
         <button onClick={() => setLang(lang === "en" ? "tr" : "en")} style={{ color: "var(--muted)", marginTop: 12, fontSize: 10 }}>
@@ -192,7 +154,7 @@ function ImageZoom({ src, alt, onClose }) {
   );
 }
 
-function PDP({ id, navigate, openDrawer, lang }) {
+function PDP({ id, navigate, lang }) {
   const p = OIS_DATA.products.find((x) => x.id === id);
   const [imgIdx, setImgIdx] = useState(0);
   const [expanded, setExpanded] = useState(false);
@@ -218,21 +180,16 @@ function PDP({ id, navigate, openDrawer, lang }) {
   };
 
   const t = lang === "tr" ? {
-    color: "Renk", size: "Beden", selectSize: "Beden seçin", add: "Ekle",
+    color: "Renk", size: "Beden", selectSize: "Beden seçin", buy: "Shopier'de satın al",
     details: "Detaylar", care: "Bakım", shipping: "Kargo", sizeGuide: "Beden rehberi",
   } : {
-    color: "Color", size: "Size", selectSize: "Select size", add: "Add",
+    color: "Color", size: "Size", selectSize: "Select size", buy: "Buy on Shopier",
     details: "Details", care: "Care", shipping: "Shipping", sizeGuide: "Size guide",
   };
 
-  const onAdd = () => {
-    if (!size) return;
-    cart.add(p, size);
-    const dst = document.querySelector(".cart-count");
-    if (dst) { dst.classList.add("bump"); setTimeout(() => dst.classList.remove("bump"), 180); }
-    setExpanded(false);
-    setSize(null);
-    openDrawer();
+  const onBuy = () => {
+    if (!size || !p.shopierUrl) return;
+    window.location.href = p.shopierUrl;
   };
 
   return (
@@ -300,8 +257,8 @@ function PDP({ id, navigate, openDrawer, lang }) {
                   })}
                 </div>
               </div>
-              <button className={"pdp-add-btn " + (!size ? "disabled" : "")} onClick={onAdd} disabled={!size}>
-                {size ? `${t.add} ${size}` : t.selectSize}
+              <button className={"pdp-add-btn " + (!size ? "disabled" : "")} onClick={onBuy} disabled={!size}>
+                {size ? `${t.buy} · ${size}` : t.selectSize}
               </button>
             </>
           )}
@@ -324,200 +281,6 @@ function PDP({ id, navigate, openDrawer, lang }) {
           </details>
         </div>
       </div>
-    </div>
-  );
-}
-
-function Drawer({ open, onClose, navigate, lang }) {
-  const c = useCart();
-  const total = c.subtotal();
-  const t = lang === "tr" ? {
-    bag: "Çanta", empty: "Boş.", close: "Kapat", remove: "Kaldır", checkout: "ÖDEME",
-  } : {
-    bag: "Bag", empty: "Empty.", close: "Close", remove: "Remove", checkout: "CHECKOUT",
-  };
-
-  return (
-    <>
-      <div className={"drawer-scrim " + (open ? "open" : "")} onClick={onClose} />
-      <aside className={"drawer " + (open ? "open" : "")}>
-        <header>
-          <span>{t.bag} ({c.count()})</span>
-          <button onClick={onClose}>{t.close}</button>
-        </header>
-        {c.items.length === 0 && <p style={{ color: "var(--muted)" }}>{t.empty}</p>}
-        {c.items.map((i) => {
-          const product = OIS_DATA.products.find((p) => p.id === i.id);
-          return (
-            <div className="drawer-line" key={i.key}>
-              {product ? (
-                <img src={product.images[0]} alt={i.name} className="drawer-thumb" />
-              ) : (
-                <div className={"drawer-thumb-ph " + phClass(i.colorway)} />
-              )}
-              <div className="info">
-                <div className="top"><span>{i.name} / {i.colorName}</span><span>₺{i.price * i.qty}</span></div>
-                <div style={{ color: "var(--muted)" }}>Size {i.size}</div>
-                <div className="ctrls">
-                  <button onClick={() => c.setQty(i.key, i.qty - 1)}>−</button>
-                  <span>{i.qty}</span>
-                  <button onClick={() => c.setQty(i.key, i.qty + 1)}>+</button>
-                  <button onClick={() => c.remove(i.key)} style={{ marginLeft: "auto" }}>{t.remove}</button>
-                </div>
-                {product && (
-                  <div className="details">
-                    <p>{product.details}</p>
-                    <p>{product.care}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
-        {c.items.length > 0 && (
-          <div className="drawer-foot">
-            <div className="row"><span style={{ color: "var(--muted)" }}>Subtotal</span><span>₺{total}</span></div>
-            <div className="row total"><span>Total</span><span>₺{total}</span></div>
-            <a className="drawer-checkout" href="#/checkout" onClick={(e) => { e.preventDefault(); onClose(); navigate("/checkout"); }}>{t.checkout} →</a>
-          </div>
-        )}
-      </aside>
-    </>
-  );
-}
-
-function Cart({ navigate, lang }) {
-  const c = useCart();
-  const t = lang === "tr" ? { empty: "Çanta boş.", shop: "Alışverişe devam", checkout: "Ödemeye geç", remove: "Kaldır" }
-    : { empty: "Bag is empty.", shop: "Shop all", checkout: "Checkout", remove: "Remove" };
-
-  if (c.items.length === 0) {
-    return (
-      <div className="cart-page">
-        <p>{t.empty}</p>
-        <p style={{ marginTop: 16 }}>
-          <a href="#/" onClick={(e) => { e.preventDefault(); navigate("/"); }} style={{ textDecoration: "underline", textUnderlineOffset: 3 }}>{t.shop}</a>
-        </p>
-      </div>
-    );
-  }
-  return (
-    <div className="cart-page">
-      {c.items.map((i) => {
-        const product = OIS_DATA.products.find((p) => p.id === i.id);
-        return (
-          <div className="cart-line" key={i.key}>
-            {product ? (
-              <img src={product.images[0]} alt={i.name} className="img" style={{ width: 60, height: 80, objectFit: "cover", flexShrink: 0 }} />
-            ) : (
-              <div className={"img-ph " + phClass(i.colorway)} />
-            )}
-            <div className="info">
-              <div className="top">
-                <span>{i.name} / {i.colorName}</span>
-                <span>₺{i.price * i.qty}</span>
-              </div>
-              <div style={{ color: "var(--muted)" }}>Size {i.size}</div>
-              <div className="ctrls">
-                <button onClick={() => c.setQty(i.key, i.qty - 1)}>−</button>
-                <span>{i.qty}</span>
-                <button onClick={() => c.setQty(i.key, i.qty + 1)}>+</button>
-                <button onClick={() => c.remove(i.key)} style={{ marginLeft: "auto" }}>{t.remove}</button>
-              </div>
-            </div>
-          </div>
-        );
-      })}
-      <div className="cart-summary">
-        <div className="row"><span>Subtotal</span><span>₺{c.subtotal()}</span></div>
-        <div className="row"><span>Shipping</span><span>Free</span></div>
-        <div className="row total"><span>Total</span><span>₺{c.subtotal()}</span></div>
-        <a href="#/checkout" onClick={(e) => { e.preventDefault(); navigate("/checkout"); }} className="cart-cta">{t.checkout}</a>
-      </div>
-    </div>
-  );
-}
-
-function Checkout({ navigate, lang }) {
-  const c = useCart();
-  const [placed, setPlaced] = useState(false);
-  const [orderNum] = useState("OIS-" + Math.floor(10000 + Math.random() * 90000));
-  const total = c.subtotal();
-
-  if (placed) {
-    return (
-      <div className="text-page">
-        <p>Order confirmed. {orderNum}</p>
-        <p style={{ marginTop: 16 }}>A confirmation email is on its way. Tracking follows within 2–3 business days.</p>
-        <p style={{ marginTop: 24 }}>
-          <a href="#/track" onClick={(e) => { e.preventDefault(); navigate("/track"); }} style={{ textDecoration: "underline", textUnderlineOffset: 3 }}>Track order</a>
-          {" · "}
-          <a href="#/" onClick={(e) => { e.preventDefault(); navigate("/"); }} style={{ textDecoration: "underline", textUnderlineOffset: 3 }}>Keep shopping</a>
-        </p>
-      </div>
-    );
-  }
-
-  if (c.items.length === 0) return <div className="text-page"><p>Bag is empty.</p></div>;
-
-  return (
-    <div className="checkout-grid">
-      <div>
-        <div style={{ color: "var(--muted)", marginBottom: 6 }}>Contact</div>
-        <div className="field"><label>Email</label><input type="email" placeholder="you@domain.com" /></div>
-
-        <div style={{ color: "var(--muted)", marginTop: 24, marginBottom: 6 }}>Delivery</div>
-        <div className="field"><label>Name</label><input /></div>
-        <div className="field"><label>Address</label><input /></div>
-        <div className="field-row">
-          <div className="field"><label>City</label><input /></div>
-          <div className="field"><label>Postal</label><input /></div>
-        </div>
-        <div className="field"><label>Country</label><input defaultValue="Türkiye" /></div>
-
-        <div style={{ color: "var(--muted)", marginTop: 24, marginBottom: 6 }}>Shipping</div>
-        <div className="radio-row active">
-          <span>Standard · 2–3 days</span>
-          <span>Ücretsiz</span>
-        </div>
-
-        <div style={{ color: "var(--muted)", marginTop: 24, marginBottom: 6 }}>Payment</div>
-        <div className="field"><label>Card number</label><input placeholder="•••• •••• •••• ••••" /></div>
-        <div className="field-row">
-          <div className="field"><label>Expiry</label><input placeholder="MM / YY" /></div>
-          <div className="field"><label>CVC</label><input /></div>
-        </div>
-
-        <button className="btn-plain" style={{ marginTop: 24 }} onClick={() => setPlaced(true)}>
-          Place order · ₺{total}
-        </button>
-      </div>
-
-      <aside>
-        <div style={{ color: "var(--muted)", marginBottom: 8 }}>Order · {c.count()} items</div>
-        {c.items.map((i) => {
-          const product = OIS_DATA.products.find((p) => p.id === i.id);
-          return (
-            <div key={i.key} style={{ display: "flex", gap: 12, padding: "8px 0", borderBottom: "1px solid #eee" }}>
-              {product ? (
-                <img src={product.images[0]} alt={i.name} style={{ width: 44, height: 58, objectFit: "cover", flexShrink: 0 }} />
-              ) : (
-                <div style={{ width: 44, height: 58, background: i.colorway === "ink" ? "#0a0a0a" : "#ede5d3", flexShrink: 0 }} />
-              )}
-              <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 2 }}>
-                <div style={{ display: "flex", justifyContent: "space-between" }}><span>{i.name}</span><span>₺{i.price * i.qty}</span></div>
-                <span style={{ color: "var(--muted)" }}>{i.colorName} / {i.size} / ×{i.qty}</span>
-              </div>
-            </div>
-          );
-        })}
-        <div style={{ marginTop: 16 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", padding: "3px 0" }}><span style={{ color: "var(--muted)" }}>Subtotal</span><span>₺{c.subtotal()}</span></div>
-          <div style={{ display: "flex", justifyContent: "space-between", padding: "3px 0" }}><span style={{ color: "var(--muted)" }}>Shipping</span><span>Ücretsiz</span></div>
-          <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 0 0", marginTop: 4, borderTop: "1px solid #000" }}><span>Total</span><span>₺{total}</span></div>
-          <div style={{ color: "var(--muted)", fontSize: 9, marginTop: 6 }}>Fiyatlar KDV dahildir.</div>
-        </div>
-      </aside>
     </div>
   );
 }
@@ -847,7 +610,6 @@ function HomeSplash({ children }) {
 function App() {
   const [route, setRoute] = useState(window.location.hash.replace(/^#/, "") || "/");
   const [tweaksOpen, setTweaksOpen] = useState(false);
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const [lang, setLang] = useState(() => localStorage.getItem("ois_lang") || "tr");
   const changeLang = (l) => { setLang(l); localStorage.setItem("ois_lang", l); };
 
@@ -876,7 +638,6 @@ function App() {
       if (p) { title = `${p.name} — ois.earth`; desc = p.details; img = "https://ois.earth/" + p.images[0]; }
     } else if (route === "/lookbook") { title = "Lookbook — ois.earth"; desc = "OiS lookbook, shot in Istanbul."; }
     else if (route === "/about") { title = "About — ois.earth"; }
-    else if (route === "/cart") { title = "Bag — ois.earth"; }
     document.title = title;
     const setMeta = (name, val, attr = "name") => {
       let el = document.querySelector(`meta[${attr}="${name}"]`);
@@ -904,9 +665,7 @@ function App() {
 
   let page;
   if (isHome) page = <Home navigate={navigate} />;
-  else if (route.startsWith("/p/")) page = <PDP id={route.slice(3)} navigate={navigate} openDrawer={() => setDrawerOpen(true)} lang={lang} />;
-  else if (route === "/cart") page = <Cart navigate={navigate} lang={lang} />;
-  else if (route === "/checkout") page = <Checkout navigate={navigate} lang={lang} />;
+  else if (route.startsWith("/p/")) page = <PDP id={route.slice(3)} navigate={navigate} lang={lang} />;
   else if (route === "/track") page = <Track lang={lang} />;
   else if (route === "/lookbook") page = <Lookbook />;
   else if (route === "/about") page = <About lang={lang} />;
@@ -924,7 +683,6 @@ function App() {
       ) : (
         <Shell route={route} navigate={navigate} lang={lang} setLang={changeLang}>{fadedPage}</Shell>
       )}
-      <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} navigate={navigate} lang={lang} />
       <Tweaks open={tweaksOpen} lang={lang} setLang={changeLang} />
     </>
   );
