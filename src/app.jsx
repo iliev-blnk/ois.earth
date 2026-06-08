@@ -69,18 +69,7 @@ function Shell({ route, navigate, children, lang, setLang }) {
 }
 
 function Picture({ src, alt, className, loading = 'lazy', style, onClick }) {
-  const dot = src.lastIndexOf('.');
-  const base = src.slice(0, dot);
-  return (
-    <picture>
-      <source
-        type="image/webp"
-        srcSet={`${base}-400.webp 400w, ${base}-800.webp 800w, ${base}.webp 1600w`}
-        sizes="(max-width: 780px) 100vw, 520px"
-      />
-      <img src={src} alt={alt} className={className} loading={loading} style={style} onClick={onClick} />
-    </picture>
-  );
+  return <img src={src} alt={alt} className={className} loading={loading} style={style} onClick={onClick} />;
 }
 
 function Home({ navigate }) {

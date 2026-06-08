@@ -38,16 +38,14 @@ ois.earth/
 │   ├── favicon.jpg
 │   └── images/
 │       ├── products/
-│       │   ├── white-front.png / .webp / -400.webp / -800.webp
-│       │   ├── white-back.png  / …
-│       │   ├── black-front.png / …
-│       │   └── black-back.png  / …
+│       │   ├── white-front.png
+│       │   ├── white-back.png
+│       │   ├── black-front.png
+│       │   └── black-back.png
 │       └── lookbook/
 │           └── vol-01/
-│               ├── lookbook1.jpg / .webp / -400.webp / -800.webp
+│               ├── lookbook1.jpg
 │               └── …
-├── scripts/
-│   └── optimize-images.js      # PNG/JPG → WebP (400w, 800w, full)
 └── .github/
     └── workflows/
         └── deploy.yml          # Build + deploy to gh-pages
@@ -62,7 +60,6 @@ npm install
 npm run dev        # localhost:5173
 npm run build      # dist/
 npm run preview    # preview dist/
-npm run images     # regenerate WebP variants in public/images/
 ```
 
 ---
@@ -105,7 +102,7 @@ Edit `src/data.js` — add an entry to the `products` array:
 }
 ```
 
-Images go in `public/images/products/` as PNGs with transparent backgrounds. Run `npm run images` to generate WebP variants.
+Images go in `public/images/products/` as PNGs with transparent backgrounds, referenced directly by path in the `images` array. Resize to ~1600px wide for web before adding.
 
 ---
 
@@ -123,8 +120,6 @@ Add images to `public/images/lookbook/vol-XX/` then update `LOOKBOOK_VOLS` in `s
   ],
 }
 ```
-
-Run `npm run images` to generate WebP variants.
 
 ---
 
@@ -179,7 +174,6 @@ GitHub Pages source must be set to the `gh-pages` branch (Settings → Pages).
 
 ### Done ✓
 - [x] Vite build pipeline (replaces CDN React + Babel)
-- [x] WebP image optimization — 400w / 800w / full-size variants, `<picture>` srcset
 - [x] GitHub Actions CI/CD — builds and deploys on push to master
 - [x] Fullscreen image zoom on PDP — tap/click image, Escape to close
 - [x] Page fade transition — 200ms fade+slide on every route change
