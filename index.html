@@ -190,7 +190,9 @@
   .tile { display: block; text-align: center; position: relative; }
   .tile-img {
     width: 100%;
-    height: auto;
+    aspect-ratio: 1 / 1.08;
+    object-fit: cover;
+    object-position: center 42%;
     display: block;
     transition: opacity 150ms linear;
   }
