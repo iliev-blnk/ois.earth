@@ -60,10 +60,11 @@
   .splash .logo .sub {
     display: block;
     color: var(--muted);
-    font-size: 11px;
-    margin-top: 12px;
-    letter-spacing: 0.08em;
-    font-weight: normal;
+    font-size: clamp(13px, 1.5vw, 18px);
+    margin-top: clamp(16px, 2.4vh, 28px);
+    letter-spacing: 0.62em;
+    text-indent: 0.62em;
+    font-weight: 400;
     text-transform: uppercase;
   }
   .splash .hint {
