@@ -8,8 +8,8 @@ export const OIS_DATA = {
       collection: "essentials",
       colorway: "cream",
       images: [
-        "images/products/tshirtfront.jpg",
-        "images/products/tshirtback.jpg",
+        "images/products/tshirtfront.png",
+        "images/products/tshirtback.png",
       ],
       shopierUrl: "https://www.shopier.com/oissportswear/41810065",
       sizes: ["S", "M", "L", "XL"],
