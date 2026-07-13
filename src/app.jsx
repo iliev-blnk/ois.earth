@@ -84,7 +84,7 @@ function Home({ navigate }) {
     <div className="home">
       {OIS_DATA.products.map((p) => (
         <a key={p.id} className="tile" href={"#/p/" + p.id} onClick={(e) => { e.preventDefault(); navigate("/p/" + p.id); }}>
-          <Picture src={p.images[0]} alt={p.name + " " + p.colorName} className="tile-img" loading="lazy" />
+          <Picture src={p.images[0]} alt={p.name + " " + p.colorName} className="tile-img" loading="lazy" style={p.tilePos ? { objectPosition: p.tilePos } : undefined} />
           <div className="meta">
             <span>{p.name}</span>
             <span style={{ color: "var(--muted)" }}>₺{p.price}</span>

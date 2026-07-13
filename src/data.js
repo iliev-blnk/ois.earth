@@ -29,6 +29,7 @@ export const OIS_DATA = {
     },
     {
       id: "essential-hoodie-black",
+      tilePos: "center 0%",
       name: "I am only human",
       colorName: "Black",
       price: 2000,
@@ -56,6 +57,7 @@ export const OIS_DATA = {
     },
     {
       id: "essential-hoodie-white",
+      tilePos: "center 0%",
       name: "It's my first time on earth",
       colorName: "White",
       price: 2000,
