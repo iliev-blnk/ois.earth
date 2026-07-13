@@ -3,6 +3,13 @@ import { OIS_DATA } from './data.js';
 
 let splashSeen = false;
 
+// Pick a localized string. Accepts either a plain string (legacy) or a
+// { en, tr } map, falling back to English then whatever is available.
+function L(val, lang) {
+  if (val == null || typeof val === "string") return val;
+  return val[lang] ?? val.en ?? Object.values(val)[0] ?? "";
+}
+
 function Shell({ route, navigate, children, lang, setLang }) {
   const is = (r) => route === r || (r !== "/" && route.startsWith(r));
 
@@ -258,15 +265,15 @@ function PDP({ id, navigate, lang }) {
         <div style={{ marginTop: 32 }}>
           <details>
             <summary>{t.details}</summary>
-            <p>{p.details}</p>
+            <p>{L(p.details, lang)}</p>
           </details>
           <details>
             <summary>{t.care}</summary>
-            <p>{p.care}</p>
+            <p>{L(p.care, lang)}</p>
           </details>
           <details>
             <summary>{t.shipping}</summary>
-            <p>{p.ship}</p>
+            <p>{L(p.ship, lang)}</p>
           </details>
         </div>
       </div>
@@ -586,7 +593,7 @@ function HomeSplash({ children }) {
     <div className="snap-wrap">
       <section className="snap-section splash">
         <div className="logo">
-          OiS
+          <span className="mark" role="img" aria-label="OiS" />
           <span className="sub">EARTH</span>
         </div>
         <div className="hint">scroll ↓</div>
@@ -624,7 +631,7 @@ function App() {
     let img = "https://ois.earth/images/products/white-front.png";
     if (route.startsWith("/p/")) {
       const p = OIS_DATA.products.find((x) => x.id === route.slice(3));
-      if (p) { title = `${p.name} — ois.earth`; desc = p.details; img = "https://ois.earth/" + p.images[0]; }
+      if (p) { title = `${p.name} — ois.earth`; desc = L(p.details, lang); img = "https://ois.earth/" + p.images[0]; }
     } else if (route === "/lookbook") { title = "Lookbook — ois.earth"; desc = "OiS lookbook, shot in Istanbul."; }
     else if (route === "/about") { title = "About — ois.earth"; }
     document.title = title;
@@ -637,7 +644,7 @@ function App() {
     setMeta("og:title", title, "property");
     setMeta("og:description", desc, "property");
     setMeta("og:image", img, "property");
-  }, [route]);
+  }, [route, lang]);
 
   useEffect(() => {
     const on = (e) => {

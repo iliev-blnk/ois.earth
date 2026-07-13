@@ -48,6 +48,15 @@
     font-weight: 500;
     text-transform: none;
   }
+  .splash .logo .mark {
+    display: block;
+    width: min(64vw, 880px);
+    aspect-ratio: 1600 / 655;
+    margin: 0 auto;
+    background-color: currentColor;
+    -webkit-mask: url(/logo.png) center / contain no-repeat;
+    mask: url(/logo.png) center / contain no-repeat;
+  }
   .splash .logo .sub {
     display: block;
     color: var(--muted);
