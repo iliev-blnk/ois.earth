@@ -142,7 +142,6 @@
     .home { grid-template-columns: 1fr; gap: 48px; }
     .home .tile:nth-child(odd),
     .home .tile:nth-child(even) { transform: none; }
-    .tile .meta { bottom: 22%; }
 
     /* Splash */
     .splash .logo { font-size: 20vw; }
@@ -198,14 +197,11 @@
   }
   .tile:hover .tile-img { opacity: 0.85; }
   .tile .meta {
-    position: absolute;
-    bottom: 28%;
-    left: 0;
-    right: 0;
     display: flex;
     flex-direction: column;
     gap: 4px;
     font-size: 10px;
+    margin-top: 16px;
   }
   .home .tile:nth-child(odd) { transform: translateY(-50px); }
   .home .tile:nth-child(even) { transform: translateY(50px); }
