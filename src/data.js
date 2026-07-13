@@ -1,6 +1,24 @@
 export const OIS_DATA = {
   products: [
     {
+      id: "essential-tee-offwhite",
+      name: "Be humble",
+      colorName: "Off-White",
+      price: 1000,
+      collection: "essentials",
+      colorway: "cream",
+      images: [
+        "images/products/tshirtfront.jpg",
+        "images/products/tshirtback.jpg",
+      ],
+      shopierUrl: "https://www.shopier.com/oissportswear/41810065",
+      sizes: ["S", "M", "L", "XL"],
+      soldOut: [],
+      details: "240 gsm heavyweight cotton. Oversized fit. Drop shoulder. Ribbed crew neck. \"Be humble — respect the journey\" chest print. Pre-washed for drape.",
+      care: "Machine wash cold, inside out. Line dry. Do not bleach.",
+      ship: "Ücretsiz kargo — 2–3 iş günü içinde İstanbul'dan gönderilir.",
+    },
+    {
       id: "essential-hoodie-white",
       name: "It's my first time on earth",
       colorName: "White",
